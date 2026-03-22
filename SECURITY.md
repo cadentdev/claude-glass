@@ -22,4 +22,4 @@ claude-glass generates a static website from your `~/.claude` directory. The gen
 
 ## Reporting Vulnerabilities
 
-If you discover a security issue, please email neil@cadent.net rather than opening a public issue.
+If you discover a security issue, please email github+claude-glass@cadent.net rather than opening a public issue.
