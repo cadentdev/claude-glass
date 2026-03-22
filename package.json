@@ -1,0 +1,30 @@
+{
+  "name": "claude-glass",
+  "version": "0.1.0",
+  "description": "Static site generator for browsing Claude Code .claude directories",
+  "type": "module",
+  "bin": {
+    "claude-glass": "src/cli.ts"
+  },
+  "scripts": {
+    "build": "bun src/cli.ts build",
+    "serve": "bun src/cli.ts serve",
+    "test": "bun test"
+  },
+  "keywords": [
+    "claude-code",
+    "static-site-generator",
+    "documentation",
+    "browser",
+    "cli"
+  ],
+  "author": "Cadent Development",
+  "license": "MIT",
+  "dependencies": {
+    "highlight.js": "^11.11.0",
+    "marked": "^15.0.0",
+    "marked-highlight": "^2.2.0",
+    "sanitize-html": "^2.17.2",
+    "yaml": "^2.7.0"
+  }
+}
