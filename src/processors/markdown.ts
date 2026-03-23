@@ -67,27 +67,7 @@ export function processMarkdown(entry: ScanEntry): ProcessedFile {
 
   const title = (frontmatter.name as string) || (frontmatter.title as string) || extractTitle(body, entry.relativePath);
   const rawHtml = marked.parse(body) as string;
-  const html = sanitizeHtml(rawHtml, {
-    allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-      'details', 'summary', 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-      'pre', 'code', 'span', 'del', 'input', 'hr',
-    ]),
-    allowedAttributes: {
-      ...sanitizeHtml.defaults.allowedAttributes,
-      code: ['class'],
-      span: ['class'],
-      pre: ['class'],
-      input: ['type', 'checked', 'disabled'],
-      img: ['src', 'alt', 'title'],
-      a: ['href', 'title', 'target', 'rel'],
-    },
-    allowedClasses: {
-      code: ['hljs', 'language-*'],
-      span: ['hljs-*'],
-      pre: ['hljs'],
-    },
-    disallowedTagsMode: 'escape',
-  });
+  const html = sanitizeHtml(rawHtml, sanitizeOptions);
 
   // Build metadata card if frontmatter has entries
   let metadataHtml = '';
@@ -110,7 +90,31 @@ export function processMarkdown(entry: ScanEntry): ProcessedFile {
   };
 }
 
-function escapeHtml(str: string): string {
+export { marked, sanitizeHtml };
+
+export const sanitizeOptions = {
+  allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+    'details', 'summary', 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'pre', 'code', 'span', 'del', 'input', 'hr',
+  ]),
+  allowedAttributes: {
+    ...sanitizeHtml.defaults.allowedAttributes,
+    code: ['class'],
+    span: ['class'],
+    pre: ['class'],
+    input: ['type', 'checked', 'disabled'],
+    img: ['src', 'alt', 'title'],
+    a: ['href', 'title', 'target', 'rel'],
+  },
+  allowedClasses: {
+    code: ['hljs', 'language-*'],
+    span: ['hljs-*'],
+    pre: ['hljs'],
+  },
+  disallowedTagsMode: 'escape' as const,
+};
+
+export function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')

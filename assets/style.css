@@ -260,6 +260,96 @@ article hr {
   margin: 2rem 0;
 }
 
+/* Badges */
+.badge-row { margin: 0.5rem 0; display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.badge-green { background: var(--accent-green); color: #fff; }
+.badge-yellow { background: var(--accent-orange); color: #fff; }
+.badge-orange { background: #f7768e; color: #fff; }
+.badge-blue { background: var(--link); color: #fff; }
+.badge-purple { background: #9d7cd8; color: #fff; }
+.badge-red { background: #a33; color: #fff; }
+.badge-default { background: var(--border); color: var(--text); }
+
+/* Skill card */
+.skill-card .skill-name { margin: 0 0 0.25rem; font-size: 1.2rem; }
+.skill-card .skill-description { color: var(--text-muted); margin: 0.5rem 0 0; font-size: 0.9rem; }
+
+/* Agent card */
+.agent-card .agent-header { display: flex; align-items: center; gap: 0.75rem; }
+.agent-card .agent-info h3 { margin: 0; font-size: 1.2rem; }
+.agent-card .agent-details { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem; }
+.agent-card .agent-description { color: var(--text-muted); margin: 0.5rem 0 0; font-size: 0.9rem; }
+.color-swatch {
+  display: inline-block;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* Workflow parent link */
+.workflow-parent {
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+}
+.parent-label { color: var(--text-muted); }
+.parent-link { color: var(--link); margin-left: 0.3rem; }
+
+/* Hook card */
+.hook-card table { margin: 0; }
+
+/* JSON tree */
+.json-tree { font-family: monospace; font-size: 0.85rem; line-height: 1.6; }
+.json-tree ul { list-style: none; padding-left: 1.2rem; }
+.json-tree details > summary { cursor: pointer; color: var(--text); }
+.json-tree details > summary:hover { color: var(--link); }
+.json-key { color: var(--link); font-weight: 500; }
+.json-string { color: var(--accent-green); }
+.json-primitive { color: var(--accent-orange); }
+.json-null { color: var(--text-muted); }
+.json-bracket { color: var(--text-muted); }
+.json-count { color: var(--text-muted); font-size: 0.8em; font-weight: 400; }
+
+/* Index tables */
+.index-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.index-table th { text-align: left; padding: 0.5rem 0.75rem; background: var(--card-bg); border-bottom: 2px solid var(--border); font-weight: 600; }
+.index-table td { padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border); }
+.index-table tr:hover td { background: var(--card-bg); }
+.index-table a { color: var(--link); text-decoration: none; font-weight: 500; }
+.index-table a:hover { text-decoration: underline; }
+
+/* Agent grid */
+.agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+.agent-index-card {
+  display: block;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color 0.15s;
+}
+.agent-index-card:hover { border-color: var(--link); }
+.agent-card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; }
+.agent-card-persona { font-size: 0.85rem; color: var(--text-muted); }
+.agent-card-desc { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+/* Directory listings */
+.dir-listing { list-style: none; padding-left: 0; }
+.dir-listing li { padding: 0.3rem 0; }
+.dir-listing a { color: var(--link); text-decoration: none; }
+.dir-listing a:hover { text-decoration: underline; }
+.dir-item { font-weight: 500; }
+.dir-count { color: var(--text-muted); font-size: 0.85rem; font-weight: 400; }
+
 /* Responsive */
 @media (max-width: 768px) {
   .sidebar {

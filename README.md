@@ -17,13 +17,17 @@ Then open `http://localhost:3333` in your browser.
 
 ## Features
 
-- Renders markdown files with syntax highlighting
-- Extracts YAML frontmatter as metadata cards
-- Directory tree navigation with collapsible sidebar
-- Breadcrumb navigation
-- Light/dark theme (follows system preference)
-- HTML sanitization on all rendered content
-- Local-only by default (see [Security](SECURITY.md))
+- **Skill browser** — SKILL.md files rendered with effort/model badges and metadata cards
+- **Agent profiles** — Persona cards with name, title, model tier, and color
+- **Hook viewer** — JSDoc metadata extraction with syntax-highlighted TypeScript
+- **Settings explorer** — Collapsible JSON tree for settings.json
+- **Index pages** — Filterable tables for skills, hooks, and agents
+- **Directory listings** — Auto-generated index pages for every directory
+- **Broken link checker** — Post-build report of internal link issues
+- **Breadcrumb navigation** — Every page shows its path in the directory tree
+- **Light/dark theme** — Follows system preference
+- **HTML sanitization** — All rendered content sanitized against XSS
+- **Local-only by default** — See [Security](SECURITY.md)
 
 ## Requirements
 
@@ -33,7 +37,7 @@ Then open `http://localhost:3333` in your browser.
 
 ```
 claude-glass build [dir]     Build static site
-claude-glass serve [dir]     Build + serve with live-reload
+claude-glass serve [dir]     Build + serve
 
 Options:
   --output, -o <path>    Output directory (default: /tmp/claude-glass)
@@ -54,9 +58,18 @@ bun src/cli.ts serve ~/.claude --host 0.0.0.0
 
 ## How It Works
 
-claude-glass scans your `.claude` directory, processes markdown files through a rendering pipeline, and outputs a static HTML site. It automatically excludes ephemeral directories (sessions, telemetry, cache) and binary files.
+claude-glass scans your `.claude` directory and processes files through content-type-aware processors:
 
-The tool works on any `.claude` directory -- from a vanilla Claude Code install with just `CLAUDE.md` and `settings.json` to a fully configured setup with dozens of skills, agents, and hooks.
+| Content Type | Rendering |
+|---|---|
+| `SKILL.md` | Metadata card with effort/model badges + rendered markdown |
+| `agents/*.md` | Persona card with name, title, color swatch + backstory |
+| `Workflows/*.md` | Breadcrumb to parent skill + rendered markdown |
+| `*.hook.ts` | JSDoc extraction (trigger, purpose) + syntax-highlighted code |
+| `settings.json` | Collapsible JSON tree with section navigation |
+| Other `.md` | Standard markdown with frontmatter extraction |
+
+The tool works on any `.claude` directory — from a vanilla Claude Code install with just `CLAUDE.md` and `settings.json` to a fully configured setup with dozens of skills, agents, and hooks.
 
 ## Security
 

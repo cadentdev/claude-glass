@@ -2,8 +2,18 @@
 
 import { scan } from './scanner';
 import { processMarkdown } from './processors/markdown';
+import { processSkill } from './processors/skill';
+import { processAgent } from './processors/agent';
+import { processWorkflow } from './processors/workflow';
+import { processHook } from './processors/hook';
+import { processJson } from './processors/json-file';
+import { generateSkillsIndex } from './indexes/skills-index';
+import { generateHooksIndex } from './indexes/hooks-index';
+import { generateAgentsIndex } from './indexes/agents-index';
+import { generateDirectoryIndexes } from './indexes/directory-index';
 import { buildNavTree, renderNavHtml, buildBreadcrumbs } from './nav';
 import { renderPage } from './templates/layout';
+import { checkLinks } from './link-checker';
 import { mkdirSync, writeFileSync, copyFileSync, existsSync } from 'fs';
 import { join, dirname, relative } from 'path';
 import type { BuildConfig, ProcessedFile, ScanEntry } from './types';
@@ -40,8 +50,27 @@ export async function build(config: BuildConfig): Promise<void> {
 
   console.log(`Processed ${processed.length} files`);
 
+  // Phase 2b: Generate index pages
+  const indexes = [
+    generateSkillsIndex(processed),
+    generateHooksIndex(processed),
+    generateAgentsIndex(processed),
+  ].filter(Boolean) as ProcessedFile[];
+
+  processed.push(...indexes);
+  if (indexes.length > 0) {
+    console.log(`Generated ${indexes.length} index pages`);
+  }
+
   // Phase 3: Build nav tree
   const navTree = buildNavTree(processed);
+
+  // Phase 3b: Generate directory index pages
+  const dirIndexes = generateDirectoryIndexes(processed, navTree);
+  if (dirIndexes.length > 0) {
+    processed.push(...dirIndexes);
+    console.log(`Generated ${dirIndexes.length} directory index pages`);
+  }
 
   // Phase 4: Render and write
   mkdirSync(config.outputDir, { recursive: true });
@@ -93,31 +122,47 @@ export async function build(config: BuildConfig): Promise<void> {
     copyFileSync(cssSource, join(config.outputDir, 'style.css'));
   }
 
+  // Phase 6: Check for broken links
+  const { total, broken } = checkLinks(config.outputDir);
+  if (broken.length > 0) {
+    console.log(`\nLinks: ${total} total, ${broken.length} broken`);
+    // Show up to 20 unique broken targets
+    const uniqueTargets = [...new Set(broken.map(b => b.href))].slice(0, 20);
+    for (const href of uniqueTargets) {
+      const count = broken.filter(b => b.href === href).length;
+      console.log(`  ✗ ${href} (${count} page${count > 1 ? 's' : ''})`);
+    }
+    if (uniqueTargets.length < [...new Set(broken.map(b => b.href))].length) {
+      console.log(`  ... and ${[...new Set(broken.map(b => b.href))].length - uniqueTargets.length} more`);
+    }
+  } else {
+    console.log(`Links: ${total} checked, all OK`);
+  }
+
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   console.log(`Built ${processed.length} pages in ${elapsed}s -> ${config.outputDir}`);
 }
 
 function processFile(entry: ScanEntry): ProcessedFile | null {
   switch (entry.type) {
-    case 'markdown':
     case 'skill':
+      return processSkill(entry);
     case 'agent':
+      return processAgent(entry);
     case 'workflow':
-      return processMarkdown(entry);
-
-    case 'json':
-      // Phase 0.5: JSON processor. For now, skip.
-      return null;
-
+      return processWorkflow(entry);
     case 'hook':
+      return processHook(entry);
+    case 'json':
+      return processJson(entry);
+    case 'markdown':
+      return processMarkdown(entry);
     case 'typescript':
-      // Phase 0.5: Hook/TS processor. For now, skip.
+      // Non-hook TS files: skip for now
       return null;
-
     case 'jsonl':
-      // Phase 0.5: JSONL processor. For now, skip.
+      // JSONL: skip (summary stats deferred)
       return null;
-
     default:
       return null;
   }
