@@ -13,14 +13,26 @@ import { generateAgentsIndex } from './indexes/agents-index';
 import { generateDirectoryIndexes } from './indexes/directory-index';
 import { buildNavTree, renderNavHtml, buildBreadcrumbs } from './nav';
 import { renderPage } from './templates/layout';
+import { renderLandingPage } from './templates/landing';
+import { readManifest, writeManifest, updateManifest, deriveName, nameToPrefix } from './manifest';
 import { checkLinks } from './link-checker';
 import { mkdirSync, writeFileSync, copyFileSync, existsSync } from 'fs';
-import { join, dirname, relative } from 'path';
+import { join, dirname } from 'path';
 import type { BuildConfig, ProcessedFile, ScanEntry } from './types';
 
 export async function build(config: BuildConfig): Promise<void> {
   const startTime = Date.now();
-  console.log(`Scanning ${config.inputDir}...`);
+
+  // Resolve project name and prefix
+  const name = config.name || deriveName(config.inputDir);
+  const prefix = nameToPrefix(name);
+  const prefixDir = join(config.outputDir, prefix);
+
+  console.log(`Building "${name}" (/${prefix}/) from ${config.inputDir}...`);
+
+  // Read existing manifest (preserves other sites)
+  mkdirSync(config.outputDir, { recursive: true });
+  const manifest = readManifest(config.outputDir);
 
   // Phase 1: Scan
   const extraExclusions = [...config.exclude];
@@ -72,15 +84,19 @@ export async function build(config: BuildConfig): Promise<void> {
     console.log(`Generated ${dirIndexes.length} directory index pages`);
   }
 
-  // Phase 4: Render and write
-  mkdirSync(config.outputDir, { recursive: true });
+  // Phase 4: Render and write into prefix subdirectory
+  mkdirSync(prefixDir, { recursive: true });
 
-  // Compute CSS depth for relative path
+  const baseUrl = '/' + prefix;
+
   for (const file of processed) {
-    const depth = file.outputPath.split('/').length - 1;
-    const cssPath = '../'.repeat(depth) + 'style.css';
-    const navHtml = renderNavHtml(navTree, file.entry.relativePath);
-    const breadcrumbs = buildBreadcrumbs(file.entry.relativePath);
+    // Output path within the prefix subdirectory
+    const prefixedOutputPath = join(prefix, file.outputPath);
+    // CSS depth is relative to the file within the prefix dir
+    const depthInPrefix = file.outputPath.split('/').length - 1;
+    const cssPath = '../'.repeat(depthInPrefix) + 'style.css';
+    const navHtml = renderNavHtml(navTree, file.entry.relativePath, baseUrl);
+    const breadcrumbs = buildBreadcrumbs(file.entry.relativePath, baseUrl);
 
     const html = renderPage({
       title: file.title,
@@ -90,43 +106,57 @@ export async function build(config: BuildConfig): Promise<void> {
       cssPath,
     });
 
-    const outPath = join(config.outputDir, file.outputPath);
+    const outPath = join(config.outputDir, prefixedOutputPath);
     mkdirSync(dirname(outPath), { recursive: true });
     writeFileSync(outPath, html);
 
     if (config.verbose) {
-      console.log(`  Write: ${file.outputPath}`);
+      console.log(`  Write: ${prefixedOutputPath}`);
     }
   }
 
-  // Write landing page (CLAUDE.md or first file)
-  const landing = processed.find((f) => f.entry.relativePath === 'CLAUDE.md')
+  // Write site-level landing page (CLAUDE.md or first file) as prefix/index.html
+  const siteLanding = processed.find((f) => f.entry.relativePath === 'CLAUDE.md')
     || processed.find((f) => f.entry.relativePath === 'README.md')
     || processed[0];
 
-  if (landing) {
-    const navHtml = renderNavHtml(navTree, '');
+  if (siteLanding) {
+    const navHtml = renderNavHtml(navTree, '', baseUrl);
     const indexHtml = renderPage({
-      title: 'Home',
-      content: landing.html,
+      title: name,
+      content: siteLanding.html,
       navHtml,
-      breadcrumbs: '<span class="crumb-current">Home</span>',
+      breadcrumbs: `<a href="/index.html" class="crumb">Home</a> <span class="crumb-sep">/</span> <span class="crumb-current">${escapeHtml(name)}</span>`,
       cssPath: 'style.css',
     });
-    writeFileSync(join(config.outputDir, 'index.html'), indexHtml);
+    writeFileSync(join(prefixDir, 'index.html'), indexHtml);
   }
 
-  // Copy CSS
+  // Copy CSS into prefix subdirectory
   const cssSource = join(import.meta.dir, '..', 'assets', 'style.css');
   if (existsSync(cssSource)) {
+    copyFileSync(cssSource, join(prefixDir, 'style.css'));
+    // Also copy to root for landing page
     copyFileSync(cssSource, join(config.outputDir, 'style.css'));
   }
 
-  // Phase 6: Check for broken links
+  // Update manifest with this site's entry
+  const updatedManifest = updateManifest(manifest, {
+    name,
+    source: config.inputDir,
+    prefix,
+    fileCount: processed.length,
+  });
+  writeManifest(config.outputDir, updatedManifest);
+
+  // Generate root landing page from manifest
+  const landingHtml = renderLandingPage(updatedManifest);
+  writeFileSync(join(config.outputDir, 'index.html'), landingHtml);
+
+  // Phase 6: Check for broken links (use root outputDir so absolute /prefix/ links resolve)
   const { total, broken } = checkLinks(config.outputDir);
   if (broken.length > 0) {
     console.log(`\nLinks: ${total} total, ${broken.length} broken`);
-    // Show up to 20 unique broken targets
     const uniqueTargets = [...new Set(broken.map(b => b.href))].slice(0, 20);
     for (const href of uniqueTargets) {
       const count = broken.filter(b => b.href === href).length;
@@ -140,7 +170,8 @@ export async function build(config: BuildConfig): Promise<void> {
   }
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-  console.log(`Built ${processed.length} pages in ${elapsed}s -> ${config.outputDir}`);
+  console.log(`Built ${processed.length} pages in ${elapsed}s -> ${prefixDir}`);
+  console.log(`Sites in manifest: ${updatedManifest.sites.map(s => s.name).join(', ')}`);
 }
 
 function processFile(entry: ScanEntry): ProcessedFile | null {
@@ -158,12 +189,14 @@ function processFile(entry: ScanEntry): ProcessedFile | null {
     case 'markdown':
       return processMarkdown(entry);
     case 'typescript':
-      // Non-hook TS files: skip for now
       return null;
     case 'jsonl':
-      // JSONL: skip (summary stats deferred)
       return null;
     default:
       return null;
   }
+}
+
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }

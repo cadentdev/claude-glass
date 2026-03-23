@@ -26,10 +26,10 @@ export function checkLinks(outputDir: string): { total: number; broken: LinkResu
     while ((match = hrefRegex.exec(content)) !== null) {
       const href = match[1];
 
-      // Skip external links, anchors, javascript:, mailto:
+      // Skip external links, anchors, javascript:, mailto:, data:
       if (href.startsWith('http://') || href.startsWith('https://') ||
           href.startsWith('#') || href.startsWith('javascript:') ||
-          href.startsWith('mailto:')) {
+          href.startsWith('mailto:') || href.startsWith('data:')) {
         continue;
       }
 

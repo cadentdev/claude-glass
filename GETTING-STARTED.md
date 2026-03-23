@@ -65,17 +65,30 @@ bun src/cli.ts serve --no-memory
 bun src/cli.ts serve --exclude "PAI/**" --exclude "lib/**"
 ```
 
+### Add more sites
+
+```bash
+# Add another project's .claude directory
+bun src/cli.ts build ~/Repos/myproject/.claude
+
+# Override the auto-derived name
+bun src/cli.ts build ~/Repos/myproject/.claude --name my-project
+```
+
+Each site gets its own section. The landing page shows cards for all registered sites.
+
 ## What You'll See
 
-- **Home page** -- Your `CLAUDE.md` rendered as the landing page
+- **Landing page** -- Site index with project cards for each registered `.claude` directory
 - **Sidebar** -- Collapsible directory tree for navigating all content
 - **Skills** -- Each `SKILL.md` file rendered with frontmatter metadata cards
 - **Agents** -- Agent definitions with persona details
+- **Hooks** -- TypeScript hooks with JSDoc extraction and syntax highlighting
 - **Memory** -- Work sessions, learning signals, relationship tracking
-- **Hooks** -- TypeScript hook files (rendered as markdown in v0.1)
 
 ## Next Steps
 
 - Browse through your skills to discover capabilities you haven't used
+- Add more `.claude` directories from other projects
 - Check the MEMORY/WORK directory to see past session PRDs
 - Review agent definitions to understand available personas

@@ -17,15 +17,20 @@ export function renderPage(opts: {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${escapeHtml(opts.title)} — claude-glass</title>
   <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
   <link rel="stylesheet" href="${opts.cssPath}">
 </head>
 <body>
   <div class="layout">
     <aside class="sidebar">
       <div class="sidebar-header">
-        <h1 class="logo"><a href="/">claude-glass</a></h1>
+        <h1 class="logo"><a href="/">&#128269; claude-glass</a></h1>
       </div>
       ${opts.navHtml}
+      <div class="sidebar-footer">
+        <hr>
+        <p><a href="https://github.com/cadentdev/claude-glass">Claude-glass</a> is an open source project by <a href="https://cadent.net/">Cadent</a></p>
+      </div>
     </aside>
     <main class="content">
       <div class="breadcrumbs">${opts.breadcrumbs}</div>

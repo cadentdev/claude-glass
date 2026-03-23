@@ -2,7 +2,7 @@
 
 Static site generator for browsing Claude Code `.claude` directories.
 
-Turn your `~/.claude` directory into a browseable local website. Discover skills, hooks, agents, and configuration you didn't know you had.
+Turn your `~/.claude` directory into a browseable local website. Discover skills, hooks, agents, and configuration you didn't know you had. Build multiple Claude Code installations into a single site with a shared landing page.
 
 ## Quick Start
 
@@ -17,6 +17,8 @@ Then open `http://localhost:3333` in your browser.
 
 ## Features
 
+- **Multi-site support** — Build multiple `.claude` directories into one site with incremental rebuilds
+- **Site index landing page** — Project cards with file counts, build dates, and resource links
 - **Skill browser** — SKILL.md files rendered with effort/model badges and metadata cards
 - **Agent profiles** — Persona cards with name, title, model tier, and color
 - **Hook viewer** — JSDoc metadata extraction with syntax-highlighted TypeScript
@@ -41,11 +43,35 @@ claude-glass serve [dir]     Build + serve
 
 Options:
   --output, -o <path>    Output directory (default: /tmp/claude-glass)
+  --name <string>        Override project name (default: auto-derived from path)
   --port, -p <number>    Server port (default: 3333)
   --host <addr>          Bind address (default: 127.0.0.1)
   --no-memory            Exclude MEMORY/ directory tree
   --exclude <glob>       Additional exclusion pattern (repeatable)
   --verbose              Print processing details
+```
+
+### Multi-site builds
+
+Each build adds or updates one site in the output directory. Previously built sites are preserved.
+
+```bash
+# Build your main .claude directory
+bun src/cli.ts build ~/.claude
+
+# Add another project's .claude directory
+bun src/cli.ts build ~/Repos/myproject/.claude
+
+# Rebuild just the first site — myproject is untouched
+bun src/cli.ts build ~/.claude
+```
+
+A build manifest (`.claude-glass.json`) in the output directory tracks all registered sites. The landing page at the root shows project cards for every site.
+
+Project names are auto-derived from the source path. Use `--name` to override:
+
+```bash
+bun src/cli.ts build ~/.claude --name my-config
 ```
 
 ### Accessing from another device
@@ -74,6 +100,10 @@ The tool works on any `.claude` directory — from a vanilla Claude Code install
 ## Security
 
 See [SECURITY.md](SECURITY.md) for the threat model and design decisions.
+
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for the full development plan from Phase 0.1 through 1.0.
 
 ## License
 
