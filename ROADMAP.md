@@ -29,7 +29,7 @@
 
 ## In Progress
 
-### Phase 0.6 — Multi-Site & Polish
+### Phase 0.6 — Multi-Site & Polish (PR #4)
 - Always-prefix build — each source gets a named subdirectory in output
 - Build manifest — `.claude-glass.json` in output dir tracks all registered sites
 - Incremental builds — only rebuild the specified `--source`, preserve others
