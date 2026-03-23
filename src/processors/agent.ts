@@ -1,7 +1,7 @@
 /** Agent processor — persona cards with name, title, model, color */
 
 import { readFileSync } from 'fs';
-import { extractFrontmatter, marked, sanitizeHtml, sanitizeOptions, escapeHtml } from './markdown';
+import { extractFrontmatter, marked, sanitizeHtml, sanitizeOptions, escapeHtml, sanitizeColor } from './markdown';
 import { modelBadge } from './badges';
 import type { ScanEntry, ProcessedFile } from '../types';
 
@@ -16,8 +16,9 @@ export function processAgent(entry: ScanEntry): ProcessedFile {
   const personaName = (frontmatter['persona.name'] as string) || '';
   const personaTitle = (frontmatter['persona.title'] as string) || '';
 
-  // Build persona card
-  const colorSwatch = color ? `<span class="color-swatch" style="background: ${escapeHtml(color)}"></span>` : '';
+  // Build persona card — validate color to prevent CSS injection
+  const safeColor = sanitizeColor(color);
+  const colorSwatch = safeColor ? `<span class="color-swatch" style="background-color: ${safeColor}"></span>` : '';
 
   const details: string[] = [];
   if (personaName) details.push(`<strong>${escapeHtml(personaName)}</strong>`);
