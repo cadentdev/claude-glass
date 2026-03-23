@@ -1,7 +1,7 @@
 /** Filesystem scanner — walks .claude directory with exclusion filtering */
 
-import { readdirSync, statSync } from 'fs';
-import { join, relative, basename } from 'path';
+import { readdirSync, statSync, existsSync } from 'fs';
+import { join, relative, basename, dirname } from 'path';
 import { DEFAULT_EXCLUSIONS, isExcluded } from './exclusions';
 import type { ScanEntry, ContentType } from './types';
 
@@ -48,6 +48,22 @@ export function scan(inputDir: string, extraExclusions: string[] = []): ScanEntr
   }
 
   walk(inputDir);
+
+  // Include repo-root CLAUDE.md if scanning a .claude directory
+  if (basename(inputDir) === '.claude') {
+    const parentClaudeMd = join(dirname(inputDir), 'CLAUDE.md');
+    if (existsSync(parentClaudeMd)) {
+      const stat = statSync(parentClaudeMd);
+      entries.push({
+        absolutePath: parentClaudeMd,
+        relativePath: 'CLAUDE.md',
+        type: 'markdown',
+        size: stat.size,
+        mtime: stat.mtime,
+      });
+    }
+  }
+
   return entries;
 }
 
