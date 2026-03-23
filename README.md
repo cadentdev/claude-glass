@@ -75,6 +75,10 @@ The tool works on any `.claude` directory — from a vanilla Claude Code install
 
 See [SECURITY.md](SECURITY.md) for the threat model and design decisions.
 
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for the full development plan from Phase 0.1 through 1.0.
+
 ## License
 
 [MIT](LICENSE)
