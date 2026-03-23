@@ -26,6 +26,7 @@ function parseArgs(args: string[]): { command: string; config: BuildConfig } {
   let noMemory = false;
   const exclude: string[] = [];
   let verbose = false;
+  let name = '';
 
   for (let i = 1; i < args.length; i++) {
     const arg = args[i];
@@ -41,6 +42,8 @@ function parseArgs(args: string[]): { command: string; config: BuildConfig } {
       noMemory = true;
     } else if (arg === '--exclude') {
       exclude.push(args[++i] || '');
+    } else if (arg === '--name') {
+      name = args[++i] || '';
     } else if (arg === '--verbose') {
       verbose = true;
     } else if (!arg.startsWith('-') && !inputDir) {
@@ -59,7 +62,7 @@ function parseArgs(args: string[]): { command: string; config: BuildConfig } {
 
   return {
     command,
-    config: { inputDir, outputDir, port, host, noSearch, noMemory, exclude, verbose },
+    config: { inputDir, outputDir, port, host, noSearch, noMemory, exclude, verbose, name },
   };
 }
 
@@ -76,6 +79,7 @@ Options:
   --output, -o <path>    Output directory (default: /tmp/claude-glass)
   --port, -p <number>    Server port (default: 3333)
   --host <addr>          Bind address (default: 127.0.0.1, use 0.0.0.0 for LAN)
+  --name <string>        Override project name (default: auto-derived from path)
   --no-search            Skip search index generation
   --no-memory            Exclude MEMORY/ directory tree
   --exclude <glob>       Additional exclusion pattern (repeatable)

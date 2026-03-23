@@ -46,6 +46,19 @@ export interface BuildConfig {
   noMemory: boolean;
   exclude: string[];
   verbose: boolean;
+  name: string;
+}
+
+export interface SiteEntry {
+  name: string;
+  source: string;
+  prefix: string;
+  lastBuilt: string;
+  fileCount: number;
+}
+
+export interface SiteManifest {
+  sites: SiteEntry[];
 }
 
 export interface Frontmatter {

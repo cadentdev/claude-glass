@@ -104,7 +104,7 @@ function countFiles(node: NavNode): number {
 
 export function buildBreadcrumbs(relativePath: string, baseUrl: string = ''): string {
   const parts = relativePath.split('/');
-  const crumbs = [{ name: 'Home', href: baseUrl + '/index.html' }];
+  const crumbs = [{ name: 'Home', href: '/index.html' }];
 
   for (let i = 0; i < parts.length; i++) {
     const href = baseUrl + '/' + parts.slice(0, i + 1).join('/') + '/index.html';
