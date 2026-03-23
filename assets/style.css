@@ -61,12 +61,40 @@ body {
   left: 0;
   bottom: 0;
   padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-header {
   padding: 0 1rem 1rem;
   border-bottom: 1px solid var(--border);
   margin-bottom: 0.5rem;
+}
+
+.sidebar-footer {
+  padding: 0.5rem 1rem;
+  margin-top: auto;
+}
+
+.sidebar-footer hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-footer p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.sidebar-footer a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.sidebar-footer a:hover {
+  text-decoration: underline;
 }
 
 .logo a {
@@ -77,6 +105,11 @@ body {
 }
 
 /* Sidebar nav */
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+}
+
 .sidebar-nav ul {
   list-style: none;
   padding-left: 0;

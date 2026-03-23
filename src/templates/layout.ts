@@ -24,9 +24,13 @@ export function renderPage(opts: {
   <div class="layout">
     <aside class="sidebar">
       <div class="sidebar-header">
-        <h1 class="logo"><a href="/">claude-glass</a></h1>
+        <h1 class="logo"><a href="/">&#128269; claude-glass</a></h1>
       </div>
       ${opts.navHtml}
+      <div class="sidebar-footer">
+        <hr>
+        <p><a href="https://github.com/cadentdev/claude-glass">Claude-glass</a> is an open source project by <a href="https://cadent.net/">Cadent</a></p>
+      </div>
     </aside>
     <main class="content">
       <div class="breadcrumbs">${opts.breadcrumbs}</div>
