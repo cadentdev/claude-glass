@@ -114,6 +114,15 @@ export const sanitizeOptions = {
   disallowedTagsMode: 'escape' as const,
 };
 
+/** Validate a CSS color value — only allow hex, rgb, hsl, and named colors */
+const CSS_COLOR_RE = /^(#[0-9a-fA-F]{3,8}|rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\)|hsl\(\s*\d{1,3}\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%\s*\)|[a-zA-Z]{1,20})$/;
+
+export function sanitizeColor(color: string): string {
+  if (!color) return '';
+  const trimmed = color.trim();
+  return CSS_COLOR_RE.test(trimmed) ? trimmed : '';
+}
+
 export function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')

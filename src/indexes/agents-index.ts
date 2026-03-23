@@ -1,6 +1,6 @@
 /** Agents index — card grid with persona name, title, model, color */
 
-import { escapeHtml } from '../processors/markdown';
+import { escapeHtml, sanitizeColor } from '../processors/markdown';
 import { modelBadge } from '../processors/badges';
 import type { ProcessedFile } from '../types';
 
@@ -20,7 +20,8 @@ export function generateAgentsIndex(files: ProcessedFile[]): ProcessedFile | nul
       const personaTitle = escapeHtml((m['persona.title'] as string) || '');
       const href = '/' + agent.outputPath;
 
-      const colorSwatch = color ? `<span class="color-swatch" style="background: ${escapeHtml(color)}"></span>` : '';
+      const safeColor = sanitizeColor(color);
+      const colorSwatch = safeColor ? `<span class="color-swatch" style="background-color: ${safeColor}"></span>` : '';
       const modelHtml = modelBadge(model);
 
       return `<a href="${href}" class="agent-index-card">

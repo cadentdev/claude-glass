@@ -49,7 +49,11 @@ export async function serve(config: BuildConfig): Promise<void> {
       const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
       return new Response(content, {
-        headers: { 'Content-Type': contentType },
+        headers: {
+          'Content-Type': contentType,
+          'X-Content-Type-Options': 'nosniff',
+          'Content-Security-Policy': "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'none'; img-src 'self' data:;",
+        },
       });
     },
   });
