@@ -1,5 +1,34 @@
 # Release Notes
 
+## v0.7.0 (2026-03-24)
+
+### Highlights
+
+- **Full-text search** — Pagefind integration indexes all generated HTML after build. Search from the sidebar on any page or from the landing page.
+- **Mobile responsive layout** — Sidebar collapses into a hamburger menu overlay on screens under 768px. Smooth slide-in animation, tap-to-close on link navigation.
+- **Internal link rewriting** — Cross-references between markdown files (e.g. `../../settings.json`, `../CLAUDE.md`) are automatically rewritten to the correct output paths during build.
+
+### Features
+
+- Pagefind search UI in sidebar with dark/light theme support via CSS variable overrides
+- Search bar on site index landing page for cross-site searching
+- `--no-search` CLI flag to skip search index generation
+- Hamburger menu button with CSS-only icon (no SVG/images)
+- Mobile breakpoints at 768px and 480px with progressive layout adjustments
+- Tables, code blocks, and metadata cards scroll horizontally on mobile
+- Breadcrumbs single-line scroll on narrow screens
+- Link rewriter resolves relative paths, fragments, and extensionless references
+- Build order: HTML -> Pagefind indexing -> link checking (so pagefind assets exist for link checker)
+- Link checker skips `_pagefind/` directory to avoid false positives
+
+### Dependencies
+
+- Added: pagefind 1.4.0
+
+### Security
+
+- CSP updated from `script-src: none` to `script-src: 'self' 'unsafe-inline'` to allow Pagefind search scripts
+
 ## v0.6.0 (2026-03-23)
 
 First public release of claude-glass.

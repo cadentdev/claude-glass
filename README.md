@@ -17,6 +17,8 @@ Then open `http://localhost:3333` in your browser.
 
 ## Features
 
+- **Full-text search** — Pagefind-powered search from sidebar or landing page
+- **Mobile responsive** — Hamburger menu sidebar on mobile, responsive layout at all breakpoints
 - **Multi-site support** — Build multiple `.claude` directories into one site with incremental rebuilds
 - **Site index landing page** — Project cards with file counts, build dates, and resource links
 - **Skill browser** — SKILL.md files rendered with effort/model badges and metadata cards
@@ -46,6 +48,7 @@ Options:
   --name <string>        Override project name (default: auto-derived from path)
   --port, -p <number>    Server port (default: 3333)
   --host <addr>          Bind address (default: 127.0.0.1)
+  --no-search            Skip search index generation
   --no-memory            Exclude MEMORY/ directory tree
   --exclude <glob>       Additional exclusion pattern (repeatable)
   --verbose              Print processing details
