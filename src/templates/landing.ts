@@ -36,6 +36,7 @@ export function renderLandingPage(manifest: SiteManifest): string {
   <meta name="color-scheme" content="light dark">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="_pagefind/pagefind-ui.css">
   <style>
     .landing { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
     .landing-header { text-align: center; margin-bottom: 3rem; }
@@ -66,6 +67,12 @@ export function renderLandingPage(manifest: SiteManifest): string {
     .getting-started pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; overflow-x: auto; font-size: 0.85rem; }
     .getting-started code { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
     .getting-started p { margin: 0.5rem 0; color: var(--text-muted); font-size: 0.9rem; }
+    .landing-search { margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+    @media (max-width: 600px) {
+      .landing { padding: 1.5rem 1rem; }
+      .landing-title { font-size: 1.5rem; }
+      .site-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -74,6 +81,8 @@ export function renderLandingPage(manifest: SiteManifest): string {
       <h1 class="landing-title">🔍 claude-glass</h1>
       <p class="landing-subtitle">Browse your Claude Code installations</p>
     </div>
+
+    <div class="landing-search" id="search"></div>
 
     <div class="site-grid">
       ${cards}
@@ -94,6 +103,19 @@ export function renderLandingPage(manifest: SiteManifest): string {
       <p>Each source directory gets its own section. Rebuild any site independently without affecting others.</p>
     </div>
   </div>
+  <script src="_pagefind/pagefind-ui.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      if (typeof PagefindUI !== 'undefined') {
+        new PagefindUI({
+          element: '#search',
+          showSubResults: true,
+          showImages: false,
+          resetStyles: false,
+        });
+      }
+    });
+  </script>
 </body>
 </html>`;
 }

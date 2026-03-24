@@ -16,6 +16,8 @@ import { renderPage } from './templates/layout';
 import { renderLandingPage } from './templates/landing';
 import { readManifest, writeManifest, updateManifest, deriveName, nameToPrefix } from './manifest';
 import { checkLinks } from './link-checker';
+import { rewriteInternalLinks, buildPathMap } from './link-rewriter';
+import { runPagefindIndex } from './search';
 import { mkdirSync, writeFileSync, copyFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import type { BuildConfig, ProcessedFile, ScanEntry } from './types';
@@ -84,10 +86,17 @@ export async function build(config: BuildConfig): Promise<void> {
     console.log(`Generated ${dirIndexes.length} directory index pages`);
   }
 
+  // Phase 4a: Rewrite internal links
+  const pathMap = buildPathMap(
+    processed.map((f) => ({ relativePath: f.entry.relativePath, outputPath: f.outputPath }))
+  );
+  const baseUrl = '/' + prefix;
+  for (const file of processed) {
+    file.html = rewriteInternalLinks(file.html, file.entry.relativePath, pathMap, baseUrl);
+  }
+
   // Phase 4: Render and write into prefix subdirectory
   mkdirSync(prefixDir, { recursive: true });
-
-  const baseUrl = '/' + prefix;
 
   for (const file of processed) {
     // Output path within the prefix subdirectory
@@ -104,6 +113,7 @@ export async function build(config: BuildConfig): Promise<void> {
       navHtml,
       breadcrumbs,
       cssPath,
+      fullOutputPath: prefixedOutputPath,
     });
 
     const outPath = join(config.outputDir, prefixedOutputPath);
@@ -128,6 +138,7 @@ export async function build(config: BuildConfig): Promise<void> {
       navHtml,
       breadcrumbs: `<a href="/index.html" class="crumb">Home</a> <span class="crumb-sep">/</span> <span class="crumb-current">${escapeHtml(name)}</span>`,
       cssPath: 'style.css',
+      fullOutputPath: prefix + '/index.html',
     });
     writeFileSync(join(prefixDir, 'index.html'), indexHtml);
   }
@@ -153,7 +164,13 @@ export async function build(config: BuildConfig): Promise<void> {
   const landingHtml = renderLandingPage(updatedManifest);
   writeFileSync(join(config.outputDir, 'index.html'), landingHtml);
 
-  // Phase 6: Check for broken links (use root outputDir so absolute /prefix/ links resolve)
+  // Phase 6: Generate search index (unless --no-search) — before link check so pagefind assets exist
+  if (!config.noSearch) {
+    console.log('\nGenerating search index...');
+    runPagefindIndex(config.outputDir, config.verbose);
+  }
+
+  // Phase 7: Check for broken links (use root outputDir so absolute /prefix/ links resolve)
   const { total, broken } = checkLinks(config.outputDir);
   if (broken.length > 0) {
     console.log(`\nLinks: ${total} total, ${broken.length} broken`);

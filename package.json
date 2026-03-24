@@ -24,6 +24,7 @@
     "highlight.js": "^11.11.0",
     "marked": "^15.0.0",
     "marked-highlight": "^2.2.0",
+    "pagefind": "^1.4.0",
     "sanitize-html": "^2.17.2",
     "yaml": "^2.7.0"
   },

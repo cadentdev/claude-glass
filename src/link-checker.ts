@@ -61,6 +61,8 @@ export function checkLinks(outputDir: string): { total: number; broken: LinkResu
 
 function collectHtmlFiles(dir: string, files: string[]) {
   for (const item of readdirSync(dir)) {
+    // Skip pagefind generated directory
+    if (item === '_pagefind') continue;
     const full = join(dir, item);
     const stat = statSync(full);
     if (stat.isDirectory()) {
