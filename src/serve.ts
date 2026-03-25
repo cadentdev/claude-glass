@@ -44,8 +44,8 @@ export async function serve(config: BuildConfig): Promise<void> {
         return new Response('Forbidden', { status: 403 });
       }
 
-      const content = readFileSync(filePath);
-      const ext = extname(filePath);
+      const content = readFileSync(realPath);
+      const ext = extname(realPath);
       const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
       return new Response(content, {

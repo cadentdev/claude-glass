@@ -77,10 +77,17 @@ export async function build(config: BuildConfig): Promise<void> {
     }
   }
 
-  // Phase 2: Process
+  // Phase 2: Process (skip files over 10MB to prevent OOM)
+  const MAX_FILE_SIZE = 10 * 1024 * 1024;
   const processed: ProcessedFile[] = [];
   for (const entry of entries) {
     try {
+      if (entry.size > MAX_FILE_SIZE) {
+        if (config.verbose) {
+          console.error(`  Skip: ${entry.relativePath} (exceeds 10MB size limit)`);
+        }
+        continue;
+      }
       const file = processFile(entry);
       if (file) processed.push(file);
     } catch (err) {

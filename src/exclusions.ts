@@ -22,9 +22,18 @@ export const DEFAULT_EXCLUSIONS = [
   '.env.*',
   '*.pem',
   '*.key',
+  '*.p12',
+  '*.pfx',
+  '*.secret',
+  '*.token',
   '.credentials.json',
+  'credentials.json',
+  'id_rsa',
+  'id_ed25519',
   'mcp-needs-auth-cache.json',
   'stats-cache.json',
+  '*.sqlite',
+  '*.db',
 
   // Binary/large
   '*.png',

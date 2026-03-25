@@ -1,6 +1,6 @@
 /** Pagefind integration — runs pagefind indexing after HTML build */
 
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import { join } from 'path';
 
 /**
@@ -18,16 +18,11 @@ export function runPagefindIndex(outputDir: string, verbose: boolean = false): v
 
   if (verbose) {
     args.push('--verbose');
-  }
-
-  const cmd = `"${pagefindBin}" ${args.join(' ')}`;
-
-  if (verbose) {
-    console.log(`Running: ${cmd}`);
+    console.log(`Running: ${pagefindBin} ${args.join(' ')}`);
   }
 
   try {
-    const result = execSync(cmd, {
+    const result = execFileSync(pagefindBin, args, {
       encoding: 'utf-8',
       timeout: 60_000,
       stdio: verbose ? 'inherit' : 'pipe',
