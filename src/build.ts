@@ -16,7 +16,8 @@ import { renderPage } from './templates/layout';
 import { renderLandingPage } from './templates/landing';
 import { readManifest, writeManifest, updateManifest, deriveName, nameToPrefix } from './manifest';
 import { checkLinks } from './link-checker';
-import { mkdirSync, writeFileSync, copyFileSync, existsSync } from 'fs';
+import { readBuildCache, writeBuildCache, diffEntries } from './build-cache';
+import { mkdirSync, writeFileSync, copyFileSync, existsSync, unlinkSync } from 'fs';
 import { join, dirname } from 'path';
 import type { BuildConfig, ProcessedFile, ScanEntry } from './types';
 
@@ -45,6 +46,33 @@ export async function build(config: BuildConfig): Promise<void> {
   if (entries.length === 0) {
     console.error('No files found. Is this a .claude directory?');
     return;
+  }
+
+  // Incremental check: compare against build cache
+  if (config.incremental) {
+    const cache = readBuildCache(config.outputDir, prefix);
+    if (cache) {
+      const diff = diffEntries(entries, cache);
+      const hasChanges = diff.changed.length > 0 || diff.added.length > 0 || diff.removed.length > 0;
+
+      if (!hasChanges) {
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        console.log(`No changes detected (${entries.length} files unchanged). Skipping build. (${elapsed}s)`);
+        return;
+      }
+
+      console.log(`Incremental: ${diff.changed.length} changed, ${diff.added.length} added, ${diff.removed.length} removed, ${diff.unchanged.length} unchanged`);
+
+      // Clean up removed files from output
+      for (const removedPath of diff.removed) {
+        const outputFile = join(prefixDir, removedPath.replace(/\.md$/, '/index.html').replace(/\.json$/, '.html'));
+        if (existsSync(outputFile)) {
+          try { unlinkSync(outputFile); } catch { /* ignore */ }
+        }
+      }
+    } else {
+      console.log('Incremental: no cache found, doing full build');
+    }
   }
 
   // Phase 2: Process
@@ -153,20 +181,25 @@ export async function build(config: BuildConfig): Promise<void> {
   const landingHtml = renderLandingPage(updatedManifest);
   writeFileSync(join(config.outputDir, 'index.html'), landingHtml);
 
-  // Phase 6: Check for broken links (use root outputDir so absolute /prefix/ links resolve)
-  const { total, broken } = checkLinks(config.outputDir);
-  if (broken.length > 0) {
-    console.log(`\nLinks: ${total} total, ${broken.length} broken`);
-    const uniqueTargets = [...new Set(broken.map(b => b.href))].slice(0, 20);
-    for (const href of uniqueTargets) {
-      const count = broken.filter(b => b.href === href).length;
-      console.log(`  ✗ ${href} (${count} page${count > 1 ? 's' : ''})`);
+  // Write build cache for next incremental run
+  writeBuildCache(config.outputDir, prefix, entries);
+
+  // Phase 6: Check for broken links (only within this site's prefix dir)
+  if (!config.noLinkCheck) {
+    const { total, broken } = checkLinks(prefixDir);
+    if (broken.length > 0) {
+      console.log(`\nLinks: ${total} total, ${broken.length} broken`);
+      const uniqueTargets = [...new Set(broken.map(b => b.href))].slice(0, 20);
+      for (const href of uniqueTargets) {
+        const count = broken.filter(b => b.href === href).length;
+        console.log(`  ✗ ${href} (${count} page${count > 1 ? 's' : ''})`);
+      }
+      if (uniqueTargets.length < [...new Set(broken.map(b => b.href))].length) {
+        console.log(`  ... and ${[...new Set(broken.map(b => b.href))].length - uniqueTargets.length} more`);
+      }
+    } else {
+      console.log(`Links: ${total} checked, all OK`);
     }
-    if (uniqueTargets.length < [...new Set(broken.map(b => b.href))].length) {
-      console.log(`  ... and ${[...new Set(broken.map(b => b.href))].length - uniqueTargets.length} more`);
-    }
-  } else {
-    console.log(`Links: ${total} checked, all OK`);
   }
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
