@@ -27,9 +27,7 @@
 - Broken link checker — post-build report
 - Shared badge system (effort: green/yellow/orange, model: blue/purple/red)
 
-## In Progress
-
-### Phase 0.6 — Multi-Site & Polish (PR #4)
+### Phase 0.6 — Multi-Site & Polish
 - Always-prefix build — each source gets a named subdirectory in output
 - Build manifest — `.claude-glass.json` in output dir tracks all registered sites
 - Incremental builds — only rebuild the specified `--source`, preserve others
@@ -38,15 +36,22 @@
 - Serve mode reads manifest, serves all sites from one root
 - Favicon (done: magnifying glass emoji)
 
+### Phase 0.7 — Search & Mobile
+- Pagefind integration for full-text search (runs after HTML build)
+- Search bar in sidebar (all pages) and on site index landing page
+- Internal link rewriting (cross-references rewritten to output paths)
+- Mobile responsive layout with hamburger menu sidebar toggle
+- `--no-search` flag to skip search index generation
+- Pagefind UI styled for dark/light themes via CSS variable overrides
+- CSP updated to allow Pagefind scripts
+- Incremental builds — `--incremental` flag skips build when no source files changed (mtime cache per site)
+- `--no-link-check` flag to skip broken link checking
+- Link checker scoped to current site prefix dir (was scanning all sites — 6.6M links)
+
 ## Planned
 
-### Phase 0.7 — Search & Mobile
-- Pagefind integration for full-text search
-- Search bar on site index landing page
-- Internal link rewriting (fix cross-reference links in source markdown)
-- Mobile responsive layout
-
-### Phase 0.8 — PAI Awareness
+### Phase 0.8 — Site Management & PAI Awareness
+- `remove` command — remove a site from manifest and delete its output directory
 - MEMORY tier rendering (distinguish auto, session, persistent)
 - PAI-specific content types (Algorithm, TELOS, learning signals)
 - Richer skill metadata (workflow count, dependency graph)

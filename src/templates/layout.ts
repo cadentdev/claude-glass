@@ -9,7 +9,23 @@ export function renderPage(opts: {
   navHtml: string;
   breadcrumbs: string;
   cssPath: string;
+  /** Full output path including prefix, e.g. "test/skills/Foo/index.html" */
+  fullOutputPath?: string;
 }): string {
+  // Pagefind assets are at the root output dir (/_pagefind/).
+  // We need to compute the relative path from this page to the root.
+  let pagefindPrefix: string;
+  if (opts.fullOutputPath) {
+    const depth = opts.fullOutputPath.split('/').length - 1;
+    pagefindPrefix = depth > 0 ? '../'.repeat(depth) : '';
+  } else {
+    // Fallback: CSS depth + 1 for the prefix directory
+    const cssDepth = opts.cssPath.split('/').filter(p => p === '..').length;
+    pagefindPrefix = '../'.repeat(cssDepth + 1);
+  }
+  const pagefindCssPath = pagefindPrefix + '_pagefind/pagefind-ui.css';
+  const pagefindJsPath = pagefindPrefix + '_pagefind/pagefind-ui.js';
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +35,7 @@ export function renderPage(opts: {
   <meta name="color-scheme" content="light dark">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
   <link rel="stylesheet" href="${opts.cssPath}">
+  <link rel="stylesheet" href="${pagefindCssPath}">
 </head>
 <body>
   <div class="layout">
@@ -26,12 +43,16 @@ export function renderPage(opts: {
       <div class="sidebar-header">
         <h1 class="logo"><a href="/">&#128269; claude-glass</a></h1>
       </div>
+      <div class="sidebar-search" id="search"></div>
       ${opts.navHtml}
       <div class="sidebar-footer">
         <hr>
-        <p><a href="https://github.com/cadentdev/claude-glass">Claude-glass</a> is an open source project by <a href="https://cadent.net/">Cadent</a></p>
+        <p><a href="https://github.com/cadentdev/claude-glass">Claude-glass</a> is an open source project on GitHub built by <a href="https://cadent.net/">Cadent</a>.</p>
       </div>
     </aside>
+    <button class="mobile-menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="hamburger-icon"></span>
+    </button>
     <main class="content">
       <div class="breadcrumbs">${opts.breadcrumbs}</div>
       <article>
@@ -40,6 +61,35 @@ export function renderPage(opts: {
       </article>
     </main>
   </div>
+  <script src="${pagefindJsPath}"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      if (typeof PagefindUI !== 'undefined') {
+        new PagefindUI({
+          element: '#search',
+          showSubResults: true,
+          showImages: false,
+          resetStyles: false,
+        });
+      }
+      // Mobile menu toggle
+      var toggle = document.querySelector('.mobile-menu-toggle');
+      var sidebar = document.querySelector('.sidebar');
+      if (toggle && sidebar) {
+        toggle.addEventListener('click', function() {
+          var expanded = sidebar.classList.toggle('sidebar-open');
+          toggle.setAttribute('aria-expanded', expanded.toString());
+        });
+        // Close sidebar when clicking a nav link on mobile
+        sidebar.addEventListener('click', function(e) {
+          if (e.target.tagName === 'A' && window.innerWidth <= 768) {
+            sidebar.classList.remove('sidebar-open');
+            toggle.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>`;
 }

@@ -36,6 +36,7 @@ export function renderLandingPage(manifest: SiteManifest): string {
   <meta name="color-scheme" content="light dark">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="_pagefind/pagefind-ui.css">
   <style>
     .landing { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
     .landing-header { text-align: center; margin-bottom: 3rem; }
@@ -66,6 +67,12 @@ export function renderLandingPage(manifest: SiteManifest): string {
     .getting-started pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; overflow-x: auto; font-size: 0.85rem; }
     .getting-started code { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
     .getting-started p { margin: 0.5rem 0; color: var(--text-muted); font-size: 0.9rem; }
+    .landing-search { margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+    @media (max-width: 600px) {
+      .landing { padding: 1.5rem 1rem; }
+      .landing-title { font-size: 1.5rem; }
+      .site-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -74,6 +81,8 @@ export function renderLandingPage(manifest: SiteManifest): string {
       <h1 class="landing-title">🔍 claude-glass</h1>
       <p class="landing-subtitle">Browse your Claude Code installations</p>
     </div>
+
+    <div class="landing-search" id="search"></div>
 
     <div class="site-grid">
       ${cards}
@@ -89,11 +98,34 @@ export function renderLandingPage(manifest: SiteManifest): string {
 
     <div class="getting-started">
       <h2>Getting Started</h2>
-      <p>Add a new site by running:</p>
-      <pre><code>bun src/cli.ts build ~/.claude --name my-project</code></pre>
+      <p>Serve your local Claude Code config instantly:</p>
+      <pre><code>claude-glass serve</code></pre>
+      <p>Build a named site:</p>
+      <pre><code>claude-glass build ~/.claude --name my-project</code></pre>
+      <p>To add any repo with a <code>.claude/</code> directory, specify the path:</p>
+      <pre><code>claude-glass build ~/my-repo --name my-repo</code></pre>
+      <p>Rebuild only when files change (ideal for cron jobs):</p>
+      <pre><code>claude-glass build ~/.claude --name my-project --incremental</code></pre>
       <p>Each source directory gets its own section. Rebuild any site independently without affecting others.</p>
     </div>
+
+    <footer style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem;">
+      <p><a href="https://github.com/cadentdev/claude-glass">Claude-glass</a> is an open source project on GitHub built by <a href="https://cadent.net/">Cadent</a>.</p>
+    </footer>
   </div>
+  <script src="_pagefind/pagefind-ui.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      if (typeof PagefindUI !== 'undefined') {
+        new PagefindUI({
+          element: '#search',
+          showSubResults: true,
+          showImages: false,
+          resetStyles: false,
+        });
+      }
+    });
+  </script>
 </body>
 </html>`;
 }

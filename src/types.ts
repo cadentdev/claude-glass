@@ -44,6 +44,8 @@ export interface BuildConfig {
   host: string;
   noSearch: boolean;
   noMemory: boolean;
+  noLinkCheck: boolean;
+  incremental: boolean;
   exclude: string[];
   verbose: boolean;
   name: string;

@@ -52,7 +52,7 @@ export async function serve(config: BuildConfig): Promise<void> {
         headers: {
           'Content-Type': contentType,
           'X-Content-Type-Options': 'nosniff',
-          'Content-Security-Policy': "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'none'; img-src 'self' data:;",
+          'Content-Security-Policy': "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:;",
         },
       });
     },
