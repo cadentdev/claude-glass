@@ -1,5 +1,19 @@
 # Release Notes
 
+## v0.7.1 (2026-03-24)
+
+### Security
+
+- **Command injection fix** — replaced `execSync` with `execFileSync` for pagefind invocation, preventing shell injection via crafted output paths
+- **TOCTOU race fix** — serve now reads from the resolved `realPath` instead of the original `filePath`, eliminating symlink swap attacks
+- **Expanded exclusion list** — added `credentials.json`, `*.secret`, `*.token`, `*.p12`, `*.pfx`, `*.sqlite`, `*.db`, SSH key patterns
+- **File size limit** — files over 10MB are skipped during processing to prevent OOM
+
+### Maintenance
+
+- Removed unused `yaml` dependency (only `highlight.js/lib/languages/yaml` was used)
+- Updated README with `--incremental` and `--no-link-check` documentation
+
 ## v0.7.0 (2026-03-24)
 
 ### Highlights

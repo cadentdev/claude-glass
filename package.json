@@ -1,6 +1,6 @@
 {
   "name": "claude-glass",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Static site generator for browsing Claude Code .claude directories",
   "type": "module",
   "bin": {
