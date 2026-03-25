@@ -50,6 +50,8 @@ Options:
   --host <addr>          Bind address (default: 127.0.0.1)
   --no-search            Skip search index generation
   --no-memory            Exclude MEMORY/ directory tree
+  --no-link-check        Skip broken link checking
+  --incremental          Only rebuild if source files changed
   --exclude <glob>       Additional exclusion pattern (repeatable)
   --verbose              Print processing details
 ```
@@ -70,6 +72,14 @@ bun src/cli.ts build ~/.claude
 ```
 
 A build manifest (`.claude-glass.json`) in the output directory tracks all registered sites. The landing page at the root shows project cards for every site.
+
+### Incremental builds
+
+Use `--incremental` to skip rebuilds when no source files have changed — ideal for cron jobs:
+
+```bash
+bun src/cli.ts build ~/.claude --incremental --no-search --no-link-check
+```
 
 Project names are auto-derived from the source path. Use `--name` to override:
 
