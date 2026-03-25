@@ -24,6 +24,8 @@ function parseArgs(args: string[]): { command: string; config: BuildConfig } {
   let host = '127.0.0.1';
   let noSearch = false;
   let noMemory = false;
+  let noLinkCheck = false;
+  let incremental = false;
   const exclude: string[] = [];
   let verbose = false;
   let name = '';
@@ -40,6 +42,10 @@ function parseArgs(args: string[]): { command: string; config: BuildConfig } {
       noSearch = true;
     } else if (arg === '--no-memory') {
       noMemory = true;
+    } else if (arg === '--no-link-check') {
+      noLinkCheck = true;
+    } else if (arg === '--incremental') {
+      incremental = true;
     } else if (arg === '--exclude') {
       exclude.push(args[++i] || '');
     } else if (arg === '--name') {
@@ -62,7 +68,7 @@ function parseArgs(args: string[]): { command: string; config: BuildConfig } {
 
   return {
     command,
-    config: { inputDir, outputDir, port, host, noSearch, noMemory, exclude, verbose, name },
+    config: { inputDir, outputDir, port, host, noSearch, noMemory, noLinkCheck, incremental, exclude, verbose, name },
   };
 }
 
@@ -82,6 +88,8 @@ Options:
   --name <string>        Override project name (default: auto-derived from path)
   --no-search            Skip search index generation
   --no-memory            Exclude MEMORY/ directory tree
+  --no-link-check        Skip broken link checking
+  --incremental          Only rebuild if source files changed
   --exclude <glob>       Additional exclusion pattern (repeatable)
   --verbose              Print processing details
 
