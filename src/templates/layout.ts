@@ -47,7 +47,7 @@ export function renderPage(opts: {
       ${opts.navHtml}
       <div class="sidebar-footer">
         <hr>
-        <p><a href="https://github.com/cadentdev/claude-glass">Claude-glass</a> is an open source project by <a href="https://cadent.net/">Cadent</a></p>
+        <p><a href="https://github.com/cadentdev/claude-glass">Claude-glass</a> is an open source project on GitHub built by <a href="https://cadent.net/">Cadent</a>.</p>
       </div>
     </aside>
     <button class="mobile-menu-toggle" aria-label="Toggle navigation" aria-expanded="false">

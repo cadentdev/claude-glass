@@ -44,10 +44,14 @@
 - `--no-search` flag to skip search index generation
 - Pagefind UI styled for dark/light themes via CSS variable overrides
 - CSP updated to allow Pagefind scripts
+- Incremental builds — `--incremental` flag skips build when no source files changed (mtime cache per site)
+- `--no-link-check` flag to skip broken link checking
+- Link checker scoped to current site prefix dir (was scanning all sites — 6.6M links)
 
 ## Planned
 
-### Phase 0.8 — PAI Awareness
+### Phase 0.8 — Site Management & PAI Awareness
+- `remove` command — remove a site from manifest and delete its output directory
 - MEMORY tier rendering (distinguish auto, session, persistent)
 - PAI-specific content types (Algorithm, TELOS, learning signals)
 - Richer skill metadata (workflow count, dependency graph)

@@ -98,10 +98,20 @@ export function renderLandingPage(manifest: SiteManifest): string {
 
     <div class="getting-started">
       <h2>Getting Started</h2>
-      <p>Add a new site by running:</p>
-      <pre><code>bun src/cli.ts build ~/.claude --name my-project</code></pre>
+      <p>Serve your local Claude Code config instantly:</p>
+      <pre><code>claude-glass serve</code></pre>
+      <p>Build a named site:</p>
+      <pre><code>claude-glass build ~/.claude --name my-project</code></pre>
+      <p>To add any repo with a <code>.claude/</code> directory, specify the path:</p>
+      <pre><code>claude-glass build ~/my-repo --name my-repo</code></pre>
+      <p>Rebuild only when files change (ideal for cron jobs):</p>
+      <pre><code>claude-glass build ~/.claude --name my-project --incremental</code></pre>
       <p>Each source directory gets its own section. Rebuild any site independently without affecting others.</p>
     </div>
+
+    <footer style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem;">
+      <p><a href="https://github.com/cadentdev/claude-glass">Claude-glass</a> is an open source project on GitHub built by <a href="https://cadent.net/">Cadent</a>.</p>
+    </footer>
   </div>
   <script src="_pagefind/pagefind-ui.js"></script>
   <script>
