@@ -18,10 +18,10 @@
 | 2. Triage Findings | [x] | 1 blocker, 4 should-fix, 9 nice-to-have |
 | 3. Fix Blockers | [x] | escapeHtml unified, manifest redacted, hrefs encoded, roadmap updated |
 | --- GATE: Security | [x] | All blockers resolved, should-fix #2 #5 deferred to v0.8.0 |
-| 4. Test Coverage | [ ] | |
-| --- GATE: Quality | [ ] | |
-| 5. Dependency Audit | [ ] | |
-| 6. Documentation Final Pass | [ ] | |
+| 4. Test Coverage | [x] | 9 tests, 14 assertions — security regressions. Full suite is v0.9.0 scope |
+| --- GATE: Quality | [x] | All tests pass, no test infra existed prior — baseline established |
+| 5. Dependency Audit | [x] | 5 runtime + 2 dev deps, all current, no CVEs |
+| 6. Documentation Final Pass | [x] | README, SECURITY.md, ROADMAP.md all consistent |
 | 7. Version Bump | [ ] | |
 | 8. Release Notes | [ ] | |
 | 9. PR Creation/Update | [ ] | |
