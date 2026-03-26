@@ -9,7 +9,7 @@
 - Nightly cron build script — incremental builds for memory-constrained machines (flicky)
 - Pagefind ETIMEDOUT fix (v0.7.1, already released but included in this branch)
 
-## Current Step: GATE: Security
+## Current Step: 15. Retrospective
 
 | Step | Status | Notes |
 |------|--------|-------|
@@ -22,15 +22,15 @@
 | --- GATE: Quality | [x] | All tests pass, no test infra existed prior — baseline established |
 | 5. Dependency Audit | [x] | 5 runtime + 2 dev deps, all current, no CVEs |
 | 6. Documentation Final Pass | [x] | README, SECURITY.md, ROADMAP.md all consistent |
-| 7. Version Bump | [ ] | |
-| 8. Release Notes | [ ] | |
-| 9. PR Creation/Update | [ ] | |
-| 10. Issue Triage | [ ] | |
-| 11. Merge & Verify | [ ] | |
-| --- GATE: CI | [ ] | |
-| 12. Tag & GitHub Release | [ ] | |
-| 13. Post-Release | [ ] | |
-| 14. Branch Cleanup | [ ] | |
+| 7. Version Bump | [x] | 0.7.1 → 0.7.2 in package.json |
+| 8. Release Notes | [x] | RELEASE-NOTES.md updated |
+| 9. PR Creation/Update | [x] | PR #8 |
+| 10. Issue Triage | [x] | No open issues |
+| 11. Merge & Verify | [x] | Merged to main, credential scan clean |
+| --- GATE: CI | [!] | No CI configured (Phase 0.9 scope) |
+| 12. Tag & GitHub Release | [x] | v0.7.2 tagged and published |
+| 13. Post-Release | [x] | LinkedIn draft created, no npm publish (not yet public) |
+| 14. Branch Cleanup | [x] | feature/search-identity-fixes deleted local + remote |
 | 15. Retrospective | [ ] | |
 
 ## Findings
