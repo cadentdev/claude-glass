@@ -50,6 +50,13 @@
 
 ## Planned
 
+### Phase 0.7.5 — Testing & CI
+- Shared `escapeHtml` utility (`src/utils/escape.ts`) — eliminate duplicate functions across layout.ts, build.ts, nav.ts
+- Unit tests for processors, scanner, nav builder
+- Integration tests for full build pipeline
+- CI via GitHub Actions
+- Type checking in CI (`tsc --noEmit`)
+
 ### Phase 0.8 — Site Management & PAI Awareness
 - `remove` command — remove a site from manifest and delete its output directory
 - MEMORY tier rendering (distinguish auto, session, persistent)
@@ -57,12 +64,6 @@
 - Richer skill metadata (workflow count, dependency graph)
 - CSP hardening — replace `unsafe-inline` script-src with nonce-based CSP
 - Access logging in serve mode — timestamp, IP, request path
-
-### Phase 0.9 — Testing & Quality
-- Unit tests for processors, scanner, nav builder
-- Integration tests for full build pipeline
-- CI via GitHub Actions
-- Type checking in CI (`tsc --noEmit`)
 
 ### Phase 1.0 — Public Launch
 - npm publish (`npx claude-glass serve`)
