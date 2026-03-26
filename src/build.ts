@@ -140,7 +140,7 @@ export async function build(config: BuildConfig): Promise<void> {
     const depthInPrefix = file.outputPath.split('/').length - 1;
     const cssPath = '../'.repeat(depthInPrefix) + 'style.css';
     const navHtml = renderNavHtml(navTree, file.entry.relativePath, baseUrl);
-    const breadcrumbs = buildBreadcrumbs(file.entry.relativePath, baseUrl);
+    const breadcrumbs = buildBreadcrumbs(file.entry.relativePath, baseUrl, name);
 
     const html = renderPage({
       title: file.title,
@@ -149,6 +149,8 @@ export async function build(config: BuildConfig): Promise<void> {
       breadcrumbs,
       cssPath,
       fullOutputPath: prefixedOutputPath,
+      siteName: name,
+      sitePrefix: prefix,
     });
 
     const outPath = join(config.outputDir, prefixedOutputPath);
@@ -174,6 +176,8 @@ export async function build(config: BuildConfig): Promise<void> {
       breadcrumbs: `<a href="/index.html" class="crumb">Home</a> <span class="crumb-sep">/</span> <span class="crumb-current">${escapeHtml(name)}</span>`,
       cssPath: 'style.css',
       fullOutputPath: prefix + '/index.html',
+      siteName: name,
+      sitePrefix: prefix,
     });
     writeFileSync(join(prefixDir, 'index.html'), indexHtml);
   }

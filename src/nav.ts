@@ -102,9 +102,16 @@ function countFiles(node: NavNode): number {
   return node.children.reduce((sum, c) => sum + countFiles(c), 0);
 }
 
-export function buildBreadcrumbs(relativePath: string, baseUrl: string = ''): string {
+export function buildBreadcrumbs(relativePath: string, baseUrl: string = '', siteName?: string): string {
   const parts = relativePath.split('/');
-  const crumbs = [{ name: 'Home', href: '/index.html' }];
+  const crumbs = [
+    { name: 'Home', href: '/index.html' },
+  ];
+
+  // Add site name as second crumb (links to site index)
+  if (siteName) {
+    crumbs.push({ name: siteName, href: baseUrl + '/index.html' });
+  }
 
   for (let i = 0; i < parts.length; i++) {
     const href = baseUrl + '/' + parts.slice(0, i + 1).join('/') + '/index.html';

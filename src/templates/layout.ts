@@ -11,6 +11,10 @@ export function renderPage(opts: {
   cssPath: string;
   /** Full output path including prefix, e.g. "test/skills/Foo/index.html" */
   fullOutputPath?: string;
+  /** Site name for display (e.g. "flicky", "slipbox") */
+  siteName?: string;
+  /** Site prefix for URL paths (e.g. "flicky", "slipbox") */
+  sitePrefix?: string;
 }): string {
   // Pagefind assets are at the root output dir (/_pagefind/).
   // We need to compute the relative path from this page to the root.
@@ -31,7 +35,7 @@ export function renderPage(opts: {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(opts.title)} — claude-glass</title>
+  <title>${escapeHtml(opts.title)}${opts.siteName ? ` — ${escapeHtml(opts.siteName)}` : ''} — claude-glass</title>
   <meta name="color-scheme" content="light dark">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
   <link rel="stylesheet" href="${opts.cssPath}">
@@ -39,9 +43,10 @@ export function renderPage(opts: {
 </head>
 <body>
   <div class="layout">
-    <aside class="sidebar">
+    <aside class="sidebar" data-pagefind-ignore>
       <div class="sidebar-header">
-        <h1 class="logo"><a href="/">&#128269; claude-glass</a></h1>
+        <h1 class="logo"><a href="/">&#128269; claude-glass</a></h1>${opts.siteName ? `
+        <div class="site-name"><a href="/${opts.sitePrefix || ''}/index.html">${escapeHtml(opts.siteName)}</a></div>` : ''}
       </div>
       <div class="sidebar-search" id="search"></div>
       ${opts.navHtml}
@@ -55,7 +60,7 @@ export function renderPage(opts: {
     </button>
     <main class="content">
       <div class="breadcrumbs">${opts.breadcrumbs}</div>
-      <article>
+      <article${opts.siteName ? ` data-pagefind-meta="site:${escapeHtml(opts.siteName)}, title:${escapeHtml(opts.title)} — ${escapeHtml(opts.siteName)}"` : ''}>
         <h1 class="page-title">${escapeHtml(opts.title)}</h1>
         ${opts.content}
       </article>
