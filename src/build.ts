@@ -190,10 +190,11 @@ export async function build(config: BuildConfig): Promise<void> {
     copyFileSync(cssSource, join(config.outputDir, 'style.css'));
   }
 
-  // Update manifest with this site's entry
+  // Update manifest with this site's entry (use basename-relative path, not absolute)
+  const sourceLabel = config.inputDir.replace(require('os').homedir(), '~');
   const updatedManifest = updateManifest(manifest, {
     name,
-    source: config.inputDir,
+    source: sourceLabel,
     prefix,
     fileCount: processed.length,
   });
@@ -259,5 +260,5 @@ function processFile(entry: ScanEntry): ProcessedFile | null {
 }
 
 function escapeHtml(str: string): string {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }

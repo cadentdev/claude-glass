@@ -91,7 +91,7 @@ function renderNode(node: NavNode, currentPath: string, baseUrl: string, depth: 
   }
 
   // File node
-  const href = baseUrl + '/' + (node.outputPath || node.path);
+  const href = encodeURI(baseUrl + '/' + (node.outputPath || node.path));
   const isActive = node.path === currentPath;
   const displayName = node.title || node.name.replace(/\.(md|ts|json)$/, '');
   return `<li class="nav-file${isActive ? ' active' : ''}"><a href="${href}">${escapeHtml(displayName)}</a></li>`;
@@ -126,5 +126,5 @@ export function buildBreadcrumbs(relativePath: string, baseUrl: string = '', sit
 }
 
 function escapeHtml(str: string): string {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }

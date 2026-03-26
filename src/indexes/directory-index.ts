@@ -45,10 +45,10 @@ export function generateDirectoryIndexes(files: ProcessedFile[], navTree: NavNod
     for (const child of node.children) {
       if (child.isDirectory) {
         const childCount = countFiles(child);
-        const childHref = '/' + child.path + '/index.html';
+        const childHref = encodeURI('/' + child.path + '/index.html');
         dirs.push(`<li class="dir-item"><a href="${childHref}">📁 ${escapeHtml(child.name)}</a> <span class="dir-count">(${childCount})</span></li>`);
       } else {
-        const href = '/' + (child.outputPath || child.path);
+        const href = encodeURI('/' + (child.outputPath || child.path));
         const displayName = child.title || child.name.replace(/\.(md|ts|json)$/, '');
         fileItems.push(`<li class="file-item"><a href="${href}">${escapeHtml(displayName)}</a></li>`);
       }
