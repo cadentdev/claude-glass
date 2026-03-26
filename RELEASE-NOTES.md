@@ -1,5 +1,33 @@
 # Release Notes
 
+## v0.7.2 (2026-03-26)
+
+### Search & Site Identity
+
+- **Search result titles** — Results now show "Page Title — siteName" instead of "claude-glass" for every hit. Added `data-pagefind-meta` to article elements with correct site and title context.
+- **Sidebar site identity** — Sidebar shows site name below the logo, linking to the site index page. Added `data-pagefind-ignore` to sidebar so the logo `<h1>` isn't picked as a search title.
+- **Breadcrumb site name** — Breadcrumbs now include the site name: Home / siteName / path / page.
+- **Title tag context** — Browser tab shows "Page — siteName — claude-glass" instead of just "Page — claude-glass".
+
+### Security
+
+- **XSS hardening** — Unified `escapeHtml` across layout.ts, build.ts, and nav.ts to escape `"` and `'` in addition to `<`, `>`, `&`. Prevents attribute breakout in `data-pagefind-meta` and `href` contexts.
+- **Manifest path redaction** — Build manifest no longer exposes absolute filesystem paths (e.g., `/home/neil/.claude`). Paths are now stored as `~/`-relative.
+- **URL-encoded hrefs** — Navigation and directory index links now use `encodeURI()` to handle special characters in file paths.
+- **Security regression tests** — 9 tests covering escapeHtml, attribute breakout prevention, manifest path handling, and breadcrumb escaping.
+
+### Fixes
+
+- **Pagefind ETIMEDOUT** — Replaced `execFileSync` with `Bun.spawnSync` for pagefind invocation, resolving platform binary directly instead of going through the Node.js wrapper.
+
+### Infrastructure
+
+- **Nightly cron build script** — `scripts/nightly-build.sh` builds 4 sites incrementally with OOM-safe flags. Designed for memory-constrained machines (flicky, 3.7GB RAM).
+
+### Quality
+
+- Tests: 9 | Coverage: security regression baseline | Security findings: 14 found, 4 fixed, 2 deferred to v0.8.0
+
 ## v0.7.1 (2026-03-24)
 
 ### Security

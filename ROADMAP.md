@@ -55,6 +55,8 @@
 - MEMORY tier rendering (distinguish auto, session, persistent)
 - PAI-specific content types (Algorithm, TELOS, learning signals)
 - Richer skill metadata (workflow count, dependency graph)
+- CSP hardening — replace `unsafe-inline` script-src with nonce-based CSP
+- Access logging in serve mode — timestamp, IP, request path
 
 ### Phase 0.9 — Testing & Quality
 - Unit tests for processors, scanner, nav builder

@@ -91,7 +91,7 @@ function renderNode(node: NavNode, currentPath: string, baseUrl: string, depth: 
   }
 
   // File node
-  const href = baseUrl + '/' + (node.outputPath || node.path);
+  const href = encodeURI(baseUrl + '/' + (node.outputPath || node.path));
   const isActive = node.path === currentPath;
   const displayName = node.title || node.name.replace(/\.(md|ts|json)$/, '');
   return `<li class="nav-file${isActive ? ' active' : ''}"><a href="${href}">${escapeHtml(displayName)}</a></li>`;
@@ -102,9 +102,16 @@ function countFiles(node: NavNode): number {
   return node.children.reduce((sum, c) => sum + countFiles(c), 0);
 }
 
-export function buildBreadcrumbs(relativePath: string, baseUrl: string = ''): string {
+export function buildBreadcrumbs(relativePath: string, baseUrl: string = '', siteName?: string): string {
   const parts = relativePath.split('/');
-  const crumbs = [{ name: 'Home', href: '/index.html' }];
+  const crumbs = [
+    { name: 'Home', href: '/index.html' },
+  ];
+
+  // Add site name as second crumb (links to site index)
+  if (siteName) {
+    crumbs.push({ name: siteName, href: baseUrl + '/index.html' });
+  }
 
   for (let i = 0; i < parts.length; i++) {
     const href = baseUrl + '/' + parts.slice(0, i + 1).join('/') + '/index.html';
@@ -119,5 +126,5 @@ export function buildBreadcrumbs(relativePath: string, baseUrl: string = ''): st
 }
 
 function escapeHtml(str: string): string {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }

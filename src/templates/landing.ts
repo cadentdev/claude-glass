@@ -54,7 +54,7 @@ export function renderLandingPage(manifest: SiteManifest): string {
       transition: border-color 0.15s, box-shadow 0.15s;
     }
     .site-card:hover { border-color: var(--link); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    .site-name { font-size: 1.1rem; margin: 0 0 0.5rem; }
+    .site-name { font-size: 1.1rem; margin: 0 0 0.5rem; text-align: center; }
     .site-stats { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); }
     .resources { margin-bottom: 2rem; }
     .resources h2 { font-size: 1.2rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }

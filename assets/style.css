@@ -104,6 +104,22 @@ body {
   font-weight: 600;
 }
 
+.site-name {
+  margin: -0.3rem 0 0.5rem 0;
+  padding: 0 1rem;
+}
+
+.site-name a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.site-name a:hover {
+  color: var(--link);
+}
+
 /* Sidebar nav */
 .sidebar-nav {
   flex: 1;
