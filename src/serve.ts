@@ -1,7 +1,7 @@
 /** Dev server — serves built site with Bun.serve() */
 
 import { existsSync, readFileSync, statSync, realpathSync } from 'fs';
-import { join, extname, resolve } from 'path';
+import { join, extname } from 'path';
 import type { BuildConfig } from './types';
 
 const MIME_TYPES: Record<string, string> = {
