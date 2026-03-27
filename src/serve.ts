@@ -11,6 +11,11 @@ const MIME_TYPES: Record<string, string> = {
   '.json': 'application/json',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
+  '.wasm': 'application/wasm',
+  '.pagefind': 'application/wasm',
+  '.pf_meta': 'application/octet-stream',
+  '.pf_index': 'application/octet-stream',
+  '.pf_fragment': 'application/octet-stream',
 };
 
 export async function serve(config: BuildConfig): Promise<void> {
@@ -52,7 +57,7 @@ export async function serve(config: BuildConfig): Promise<void> {
         headers: {
           'Content-Type': contentType,
           'X-Content-Type-Options': 'nosniff',
-          'Content-Security-Policy': "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:;",
+          'Content-Security-Policy': "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; img-src 'self' data:;",
         },
       });
     },
