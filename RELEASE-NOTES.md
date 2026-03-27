@@ -1,5 +1,18 @@
 # Release Notes
 
+## Unreleased
+
+### Bug Fixes
+
+- **Search results not loading** — Pagefind search showed "Searching for..." but never returned results. Two issues: (1) WASM files served with wrong Content-Type (`application/octet-stream` instead of `application/wasm`), (2) CSP `script-src` missing `'wasm-unsafe-eval'` directive, blocking `WebAssembly.instantiate()`. (#9)
+- Added `.wasm`, `.pagefind`, `.pf_meta`, `.pf_index`, `.pf_fragment` to server MIME type map.
+
+### Quality
+
+- Tests: 12 (3 new serve.test.ts regression tests for MIME types and CSP)
+
+---
+
 ## v0.7.2 (2026-03-26)
 
 ### Search & Site Identity
