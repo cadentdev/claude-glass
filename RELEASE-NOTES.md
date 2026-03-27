@@ -1,5 +1,21 @@
 # Release Notes
 
+## v0.7.3 (2026-03-26)
+
+### Bug Fixes
+
+- **Search results not loading** (#9) — Pagefind search showed "Searching for..." but never returned results. Two root causes: (1) WASM files served with wrong Content-Type (`application/octet-stream` instead of `application/wasm`), (2) CSP `script-src` missing `'wasm-unsafe-eval'` directive, blocking `WebAssembly.instantiate()`.
+- Added `.wasm`, `.pagefind`, `.pf_meta`, `.pf_index`, `.pf_fragment` to server MIME type map.
+- Exported `MIME_TYPES` and `CSP_HEADER` constants for testability.
+- Removed unused `resolve` import from serve.ts.
+
+### Quality
+
+- Tests: 21 (12 new serve.test.ts — unit tests for MIME/CSP constants + integration tests with real HTTP server)
+- Security: 0 blockers, 1 pre-existing LOW (unsafe-inline in CSP, deferred to Phase 0.8 nonce-based CSP)
+
+---
+
 ## v0.7.2 (2026-03-26)
 
 ### Search & Site Identity

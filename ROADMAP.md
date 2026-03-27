@@ -43,7 +43,7 @@
 - Mobile responsive layout with hamburger menu sidebar toggle
 - `--no-search` flag to skip search index generation
 - Pagefind UI styled for dark/light themes via CSS variable overrides
-- CSP updated to allow Pagefind scripts
+- CSP updated to allow Pagefind scripts and WASM execution (`wasm-unsafe-eval`)
 - Incremental builds — `--incremental` flag skips build when no source files changed (mtime cache per site)
 - `--no-link-check` flag to skip broken link checking
 - Link checker scoped to current site prefix dir (was scanning all sites — 6.6M links)

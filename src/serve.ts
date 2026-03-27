@@ -1,17 +1,24 @@
 /** Dev server — serves built site with Bun.serve() */
 
 import { existsSync, readFileSync, statSync, realpathSync } from 'fs';
-import { join, extname, resolve } from 'path';
+import { join, extname } from 'path';
 import type { BuildConfig } from './types';
 
-const MIME_TYPES: Record<string, string> = {
+export const MIME_TYPES: Record<string, string> = {
   '.html': 'text/html',
   '.css': 'text/css',
   '.js': 'application/javascript',
   '.json': 'application/json',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
+  '.wasm': 'application/wasm',
+  '.pagefind': 'application/wasm',
+  '.pf_meta': 'application/octet-stream',
+  '.pf_index': 'application/octet-stream',
+  '.pf_fragment': 'application/octet-stream',
 };
+
+export const CSP_HEADER = "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; img-src 'self' data:;";
 
 export async function serve(config: BuildConfig): Promise<void> {
   const server = Bun.serve({
@@ -52,7 +59,7 @@ export async function serve(config: BuildConfig): Promise<void> {
         headers: {
           'Content-Type': contentType,
           'X-Content-Type-Options': 'nosniff',
-          'Content-Security-Policy': "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:;",
+          'Content-Security-Policy': CSP_HEADER,
         },
       });
     },
