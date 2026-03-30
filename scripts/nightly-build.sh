@@ -51,5 +51,21 @@ build_site "/home/neil/Repos/cadentdev/claude-yolo-docker/.claude" "claude-yolo-
 
 echo "$(ts) === done ===" >> "$LOG"
 
+# Build ntfy summary from log
+NTFY_URL="http://192.168.52.11:8090/homelab-alerts"
+OK_COUNT=$(grep -c " OK " "$LOG" || true)
+FAIL_COUNT=$(grep -c " FAIL " "$LOG" || true)
+SKIP_COUNT=$(grep -c " SKIP " "$LOG" || true)
+TOTAL=$((OK_COUNT + FAIL_COUNT + SKIP_COUNT))
+
+if [ "$FAIL_COUNT" -gt 0 ]; then
+  FAILURES=$(grep " FAIL " "$LOG" | sed 's/^[^ ]* [^ ]* //' | paste -sd ', ')
+  curl -s -d "[claude-glass nightly] $OK_COUNT/$TOTAL OK, $FAIL_COUNT FAILED: $FAILURES" \
+    "$NTFY_URL" > /dev/null 2>&1 || true
+else
+  curl -s -d "[claude-glass nightly] $OK_COUNT/$TOTAL sites built OK" \
+    "$NTFY_URL" > /dev/null 2>&1 || true
+fi
+
 # Print summary to stdout (visible in cron mail if configured)
 grep -E "^.*(OK|FAIL|SKIP|done)" "$LOG"
