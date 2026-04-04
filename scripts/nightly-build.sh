@@ -8,8 +8,8 @@ set -euo pipefail
 CLAUDE_GLASS="/home/neil/Repos/cadentdev/claude-glass"
 BUN="/home/neil/.bun/bin/bun"
 CLI="$CLAUDE_GLASS/src/cli.ts"
-OUTPUT="/tmp/claude-glass"
-LOG="/tmp/claude-glass-nightly.log"
+OUTPUT="$HOME/.local/share/claude-glass"
+LOG="$HOME/.local/share/claude-glass/nightly.log"
 
 # Timestamp helper
 ts() { date "+%Y-%m-%d %H:%M:%S"; }

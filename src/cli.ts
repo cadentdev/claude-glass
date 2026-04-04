@@ -19,7 +19,7 @@ import { homedir } from 'os';
 function parseArgs(args: string[]): { command: string; config: BuildConfig } {
   const command = args[0] || 'serve';
   let inputDir = '';
-  let outputDir = '/tmp/claude-glass';
+  let outputDir = homedir() + '/.local/share/claude-glass';
   let port = 3333;
   let host = '127.0.0.1';
   let noSearch = false;
@@ -82,7 +82,7 @@ Usage:
   claude-glass info [dir]      Print file stats
 
 Options:
-  --output, -o <path>    Output directory (default: /tmp/claude-glass)
+  --output, -o <path>    Output directory (default: ~/.local/share/claude-glass)
   --port, -p <number>    Server port (default: 3333)
   --host <addr>          Bind address (default: 127.0.0.1, use 0.0.0.0 for LAN)
   --name <string>        Override project name (default: auto-derived from path)
