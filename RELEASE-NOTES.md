@@ -1,5 +1,23 @@
 # Release Notes
 
+## v0.7.5 (2026-04-05)
+
+### Test Coverage
+
+Comprehensive test suite raising coverage from 34% to 98.6%. No production code changes.
+
+- **181 tests** across 12 test files (up from 21 tests in 2 files)
+- **98.6% line coverage**, 98.98% function coverage
+- New test files cover: manifest, exclusions, build-cache, nav, link-rewriter, link-checker, all processors, badges, markdown processor, and serve integration
+- Integration tests use real HTTP servers and filesystem fixtures with temp dir cleanup
+
+### Quality
+
+- Tests: 181 pass, 0 fail, 421 assertions
+- Coverage: 98.61% lines, 98.98% functions (12 of 14 modules at 100%)
+
+---
+
 ## v0.7.4 (2026-04-05)
 
 ### Improvements
