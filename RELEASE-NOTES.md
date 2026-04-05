@@ -1,5 +1,21 @@
 # Release Notes
 
+## v0.7.4 (2026-04-05)
+
+### Improvements
+
+- **Persistent output directory** — Default output moved from `/tmp/claude-glass` to `~/.local/share/claude-glass` (XDG-compliant). Build artifacts now survive reboots — no more lost sites when systemd-tmpfiles cleans `/tmp`.
+- **Deployment smoke tests** — New `scripts/smoke-test.sh` runs 14 curl-based checks against a live server: homepage, CSS, Pagefind, 404 handling, all site prefixes from manifest, and content verification. Accepts optional URL arg for remote testing.
+- **Nightly build notifications** — `scripts/nightly-build.sh` now sends a summary to ntfy after builds complete, reporting OK/FAIL/SKIP counts per site.
+
+### Quality
+
+- Tests: 21 pass, 0 fail
+- Security: 0 blockers (output dir move is a security improvement — /tmp is world-readable)
+- Dependencies: `bun audit` clean, no vulnerabilities
+
+---
+
 ## v0.7.3 (2026-03-26)
 
 ### Bug Fixes

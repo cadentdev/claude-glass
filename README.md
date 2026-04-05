@@ -44,7 +44,7 @@ claude-glass build [dir]     Build static site
 claude-glass serve [dir]     Build + serve
 
 Options:
-  --output, -o <path>    Output directory (default: /tmp/claude-glass)
+  --output, -o <path>    Output directory (default: ~/.local/share/claude-glass)
   --name <string>        Override project name (default: auto-derived from path)
   --port, -p <number>    Server port (default: 3333)
   --host <addr>          Bind address (default: 127.0.0.1)
