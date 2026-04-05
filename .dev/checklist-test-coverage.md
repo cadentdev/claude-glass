@@ -11,10 +11,10 @@
 | 3. Implement & Test | [x] | 181 tests, 98.6% coverage, 0 failures |
 | 4. Refactor | [x] | Test-only change, no prod code to refactor |
 | 5. Light Security Review | [x] | No prod code changed, tests use temp dirs |
-| 6. Create PR | [ ] | |
-| 7. Team Review | [ ] | |
-| 8. Docs & Help | [ ] | |
-| 9. Retrospective | [ ] | |
+| 6. Create PR | [x] | PR #14 |
+| 7. Team Review | [!] | Skipped — test-only, no new features |
+| 8. Docs & Help | [x] | No doc changes needed — test-only |
+| 9. Retrospective | [x] | See below |
 
 ## Detours
 
