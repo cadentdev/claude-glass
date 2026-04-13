@@ -28,13 +28,22 @@ build_site() {
   fi
 
   echo "$(ts) BUILD $name ($source)" >> "$LOG"
-  if "$BUN" "$CLI" build "$source" \
-    --output "$OUTPUT" \
-    --name "$name" \
-    --incremental \
-    --no-link-check \
-    "${extra_flags[@]}" \
-    >> "$LOG" 2>&1; then
+  # Per-site isolation: run under a user-scope cgroup with a hard 2.5 GB memory
+  # cap. If a single site's build blows its budget, the kernel kills just that
+  # bun process cleanly instead of OOM-reaping something essential and wedging
+  # the box (which is exactly what happened on 2026-04-13 during interactive
+  # #20 testing). `bun --smol` uses a smaller default heap and runs GC more
+  # aggressively — appropriate for this 3.7 GB host.
+  if systemd-run --user --scope --quiet \
+      -p MemoryMax=2500M \
+      -p MemorySwapMax=1500M \
+      "$BUN" --smol "$CLI" build "$source" \
+        --output "$OUTPUT" \
+        --name "$name" \
+        --incremental \
+        --no-link-check \
+        "${extra_flags[@]}" \
+        >> "$LOG" 2>&1; then
     echo "$(ts) OK   $name" >> "$LOG"
   else
     echo "$(ts) FAIL $name (exit $?)" >> "$LOG"
