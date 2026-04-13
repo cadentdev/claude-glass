@@ -4,7 +4,7 @@ import { escapeHtml, sanitizeColor } from '../processors/markdown';
 import { modelBadge } from '../processors/badges';
 import type { ProcessedFile } from '../types';
 
-export function generateAgentsIndex(files: ProcessedFile[]): ProcessedFile | null {
+export function generateAgentsIndex(files: ProcessedFile[], baseUrl: string = ''): ProcessedFile | null {
   const agents = files.filter(f => f.entry.type === 'agent');
   if (agents.length === 0) return null;
 
@@ -18,7 +18,7 @@ export function generateAgentsIndex(files: ProcessedFile[]): ProcessedFile | nul
       const color = m.color as string || '';
       const personaName = escapeHtml((m['persona.name'] as string) || '');
       const personaTitle = escapeHtml((m['persona.title'] as string) || '');
-      const href = '/' + agent.outputPath;
+      const href = baseUrl + '/' + agent.outputPath;
 
       const safeColor = sanitizeColor(color);
       const colorSwatch = safeColor ? `<span class="color-swatch" style="background-color: ${safeColor}"></span>` : '';

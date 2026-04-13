@@ -3,7 +3,7 @@
 import { escapeHtml } from '../processors/markdown';
 import type { ProcessedFile } from '../types';
 
-export function generateHooksIndex(files: ProcessedFile[]): ProcessedFile | null {
+export function generateHooksIndex(files: ProcessedFile[], baseUrl: string = ''): ProcessedFile | null {
   const hooks = files.filter(f => f.entry.type === 'hook');
   if (hooks.length === 0) return null;
 
@@ -14,7 +14,7 @@ export function generateHooksIndex(files: ProcessedFile[]): ProcessedFile | null
       const name = escapeHtml(hook.title || 'Unnamed');
       const trigger = escapeHtml((m.trigger as string) || '');
       const purpose = escapeHtml((m.purpose as string || '').slice(0, 120));
-      const href = '/' + hook.outputPath;
+      const href = baseUrl + '/' + hook.outputPath;
 
       return `<tr>
   <td><a href="${href}">${name}</a></td>
