@@ -133,6 +133,16 @@ export async function build(config: BuildConfig): Promise<void> {
   // Phase 4: Render and write into prefix subdirectory
   mkdirSync(prefixDir, { recursive: true });
 
+  // Capture everything downstream phases need from `processed` BEFORE the render
+  // loop drops per-file html. On low-RAM hosts the full page array is the dominant
+  // resident set; freeing each file's html immediately after its write caps peak
+  // at ~1 in-flight page instead of all pages.
+  const pageCount = processed.length;
+  const siteLanding = processed.find((f) => f.entry.relativePath === 'CLAUDE.md')
+    || processed.find((f) => f.entry.relativePath === 'README.md')
+    || processed[0];
+  const siteLandingHtml = siteLanding?.html ?? '';
+
   for (const file of processed) {
     // Output path within the prefix subdirectory
     const prefixedOutputPath = join(prefix, file.outputPath);
@@ -160,18 +170,16 @@ export async function build(config: BuildConfig): Promise<void> {
     if (config.verbose) {
       console.log(`  Write: ${prefixedOutputPath}`);
     }
+
+    file.html = '';
   }
 
   // Write site-level landing page (CLAUDE.md or first file) as prefix/index.html
-  const siteLanding = processed.find((f) => f.entry.relativePath === 'CLAUDE.md')
-    || processed.find((f) => f.entry.relativePath === 'README.md')
-    || processed[0];
-
   if (siteLanding) {
     const navHtml = renderNavHtml(navTree, '', baseUrl);
     const indexHtml = renderPage({
       title: name,
-      content: siteLanding.html,
+      content: siteLandingHtml,
       navHtml,
       breadcrumbs: `<a href="/index.html" class="crumb">Home</a> <span class="crumb-sep">/</span> <span class="crumb-current">${escapeHtml(name)}</span>`,
       cssPath: 'style.css',
@@ -181,6 +189,10 @@ export async function build(config: BuildConfig): Promise<void> {
     });
     writeFileSync(join(prefixDir, 'index.html'), indexHtml);
   }
+
+  // Render phase done — drop the stub array so GC can reclaim everything
+  // including entry/metadata references before search/link-check/pagefind run.
+  processed.length = 0;
 
   // Copy CSS into prefix subdirectory
   const cssSource = join(import.meta.dir, '..', 'assets', 'style.css');
@@ -196,7 +208,7 @@ export async function build(config: BuildConfig): Promise<void> {
     name,
     source: sourceLabel,
     prefix,
-    fileCount: processed.length,
+    fileCount: pageCount,
   });
   writeManifest(config.outputDir, updatedManifest);
 
@@ -232,7 +244,7 @@ export async function build(config: BuildConfig): Promise<void> {
   }
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-  console.log(`Built ${processed.length} pages in ${elapsed}s -> ${prefixDir}`);
+  console.log(`Built ${pageCount} pages in ${elapsed}s -> ${prefixDir}`);
   console.log(`Sites in manifest: ${updatedManifest.sites.map(s => s.name).join(', ')}`);
 }
 
