@@ -145,6 +145,23 @@ describe('checkLinks', () => {
     }
   });
 
+  test('issue #15 — site-absolute href with sitePrefix does not double-prefix', () => {
+    // Production shape: outputDir is the per-site prefix dir, and hrefs
+    // already contain the /<sitePrefix>/ segment from link-rewriter.
+    const parent = makeTempSite();
+    try {
+      const siteDir = join(parent, 'siteA');
+      mkdirSync(siteDir);
+      writeFileSync(join(siteDir, 'index.html'), '<a href="/siteA/page.html">link</a>');
+      writeFileSync(join(siteDir, 'page.html'), '<p>target</p>');
+      const result = checkLinks(siteDir, 'siteA');
+      expect(result.total).toBe(1);
+      expect(result.broken).toHaveLength(0);
+    } finally {
+      rmSync(parent, { recursive: true });
+    }
+  });
+
   test('empty output directory returns zero total', () => {
     const dir = makeTempSite();
     try {

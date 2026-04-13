@@ -10,7 +10,7 @@ interface LinkResult {
   status: 'ok' | 'broken';
 }
 
-export function checkLinks(outputDir: string): { total: number; broken: LinkResult[] } {
+export function checkLinks(outputDir: string, sitePrefix: string = ''): { total: number; broken: LinkResult[] } {
   const htmlFiles: string[] = [];
   collectHtmlFiles(outputDir, htmlFiles);
 
@@ -36,7 +36,15 @@ export function checkLinks(outputDir: string): { total: number; broken: LinkResu
       // Resolve the target path
       let targetPath: string;
       if (href.startsWith('/')) {
-        targetPath = join(outputDir, href);
+        // If href is site-absolute and already contains the site prefix,
+        // strip the leading /<sitePrefix> segment since outputDir IS the
+        // per-site prefix directory. Otherwise fall through to the legacy
+        // join-against-outputDir behavior.
+        if (sitePrefix && href.startsWith('/' + sitePrefix + '/')) {
+          targetPath = join(outputDir, href.slice(sitePrefix.length + 1));
+        } else {
+          targetPath = join(outputDir, href);
+        }
       } else {
         targetPath = resolve(dirname(file), href);
       }

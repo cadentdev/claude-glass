@@ -29,6 +29,7 @@ export async function build(config: BuildConfig): Promise<void> {
   // Resolve project name and prefix
   const name = config.name || deriveName(config.inputDir);
   const prefix = nameToPrefix(name);
+  const baseUrl = '/' + prefix;
   const prefixDir = join(config.outputDir, prefix);
 
   console.log(`Building "${name}" (/${prefix}/) from ${config.inputDir}...`);
@@ -101,9 +102,9 @@ export async function build(config: BuildConfig): Promise<void> {
 
   // Phase 2b: Generate index pages
   const indexes = [
-    generateSkillsIndex(processed),
-    generateHooksIndex(processed),
-    generateAgentsIndex(processed),
+    generateSkillsIndex(processed, baseUrl),
+    generateHooksIndex(processed, baseUrl),
+    generateAgentsIndex(processed, baseUrl),
   ].filter(Boolean) as ProcessedFile[];
 
   processed.push(...indexes);
@@ -115,7 +116,7 @@ export async function build(config: BuildConfig): Promise<void> {
   const navTree = buildNavTree(processed);
 
   // Phase 3b: Generate directory index pages
-  const dirIndexes = generateDirectoryIndexes(processed, navTree);
+  const dirIndexes = generateDirectoryIndexes(processed, navTree, baseUrl);
   if (dirIndexes.length > 0) {
     processed.push(...dirIndexes);
     console.log(`Generated ${dirIndexes.length} directory index pages`);
@@ -125,7 +126,6 @@ export async function build(config: BuildConfig): Promise<void> {
   const pathMap = buildPathMap(
     processed.map((f) => ({ relativePath: f.entry.relativePath, outputPath: f.outputPath }))
   );
-  const baseUrl = '/' + prefix;
   for (const file of processed) {
     file.html = rewriteInternalLinks(file.html, file.entry.relativePath, pathMap, baseUrl);
   }
@@ -215,7 +215,7 @@ export async function build(config: BuildConfig): Promise<void> {
 
   // Phase 7: Check for broken links (only within this site's prefix dir)
   if (!config.noLinkCheck) {
-    const { total, broken } = checkLinks(prefixDir);
+    const { total, broken } = checkLinks(prefixDir, prefix);
     if (broken.length > 0) {
       console.log(`\nLinks: ${total} total, ${broken.length} broken`);
       const uniqueTargets = [...new Set(broken.map(b => b.href))].slice(0, 20);

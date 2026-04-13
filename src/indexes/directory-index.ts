@@ -7,7 +7,7 @@ import type { ProcessedFile, NavNode } from '../types';
  * Generate index pages for every directory that contains rendered files
  * but doesn't already have its own index page.
  */
-export function generateDirectoryIndexes(files: ProcessedFile[], navTree: NavNode): ProcessedFile[] {
+export function generateDirectoryIndexes(files: ProcessedFile[], navTree: NavNode, baseUrl: string = ''): ProcessedFile[] {
   const existingPaths = new Set(files.map(f => f.outputPath));
   const indexes: ProcessedFile[] = [];
 
@@ -45,10 +45,10 @@ export function generateDirectoryIndexes(files: ProcessedFile[], navTree: NavNod
     for (const child of node.children) {
       if (child.isDirectory) {
         const childCount = countFiles(child);
-        const childHref = encodeURI('/' + child.path + '/index.html');
+        const childHref = encodeURI(baseUrl + '/' + child.path + '/index.html');
         dirs.push(`<li class="dir-item"><a href="${childHref}">📁 ${escapeHtml(child.name)}</a> <span class="dir-count">(${childCount})</span></li>`);
       } else {
-        const href = encodeURI('/' + (child.outputPath || child.path));
+        const href = encodeURI(baseUrl + '/' + (child.outputPath || child.path));
         const displayName = child.title || child.name.replace(/\.(md|ts|json)$/, '');
         fileItems.push(`<li class="file-item"><a href="${href}">${escapeHtml(displayName)}</a></li>`);
       }

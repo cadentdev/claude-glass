@@ -4,7 +4,7 @@ import { escapeHtml } from '../processors/markdown';
 import { effortBadge, modelBadge } from '../processors/badges';
 import type { ProcessedFile } from '../types';
 
-export function generateSkillsIndex(files: ProcessedFile[]): ProcessedFile | null {
+export function generateSkillsIndex(files: ProcessedFile[], baseUrl: string = ''): ProcessedFile | null {
   const skills = files.filter(f => f.entry.type === 'skill');
   if (skills.length === 0) return null;
 
@@ -28,7 +28,7 @@ export function generateSkillsIndex(files: ProcessedFile[]): ProcessedFile | nul
       const description = escapeHtml((m.description as string || '').slice(0, 100));
       const effort = m.effort as string || '';
       const model = m.model as string || '';
-      const href = '/' + skill.outputPath;
+      const href = baseUrl + '/' + skill.outputPath;
 
       // Find workflow count
       const skillDir = skill.entry.relativePath.replace(/\/SKILL\.md$/, '');
