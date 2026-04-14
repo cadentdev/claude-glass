@@ -1,5 +1,31 @@
 # Release Notes
 
+## v0.7.6 (2026-04-14)
+
+### Stability
+
+- **OOM fix for large builds** — `src/build.ts` now frees each page's rendered HTML immediately after writing, so peak memory scales with the largest in-flight page rather than the total site size. Building `~/.claude` with `MEMORY/` included (9,348 pages) drops from ~3.3 GB peak RSS (OOM-killed on a 3.7 GB host) to ~1.64 GB peak (clean exit). The fix affects the render loop only — no change to output, no change to any public API.
+
+### Nightly Cron Hardening
+
+- **Per-site memory isolation** — `scripts/nightly-build.sh` now wraps each site's build in a user-scope cgroup with `MemoryMax=2500M` and `MemorySwapMax=1500M` via `systemd-run`. If a single site exceeds its budget, the kernel kills just that build cleanly instead of OOM-reaping something essential and wedging the host.
+- **`bun --smol`** — nightly builds now run under Bun's small-heap mode (smaller default heap, more aggressive GC), appropriate for memory-constrained hosts.
+
+### Documentation
+
+- **New "Performance and Memory" section in README** linking to a detailed guide.
+- **New "Building Large Sites on Low-RAM Hosts" section in GETTING-STARTED.md** covering `bun --smol`, the trim-heavy-phases flag combo, per-site isolation with `systemd-run`, and a zram (compressed RAM swap) recommendation with install instructions for Ubuntu/Debian.
+
+### Quality
+
+- Tests: 186 pass, 0 fail, 436 assertions
+- Coverage: 97.01% lines, 92.54% functions
+- Security: 0 blockers (manual review of diff since v0.7.5)
+- Dependencies: `bun audit` clean, 0 vulnerabilities
+- End-to-end validation: full `~/.claude` rebuild under `MemoryMax=2800M` — 9,348 pages, 427 s, exit 0, peak RSS 1.64 GB, 0 swaps
+
+---
+
 ## v0.7.5 (2026-04-05)
 
 ### Test Coverage
