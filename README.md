@@ -110,6 +110,19 @@ claude-glass scans your `.claude` directory and processes files through content-
 
 The tool works on any `.claude` directory — from a vanilla Claude Code install with just `CLAUDE.md` and `settings.json` to a fully configured setup with dozens of skills, agents, and hooks.
 
+## Performance and Memory
+
+claude-glass streams page rendering — each file's HTML is freed immediately after it's written, so peak memory scales with the largest in-flight page rather than the total site size. Large builds (thousands of pages) are viable on low-RAM hosts like a Raspberry Pi or a small VPS.
+
+For extra headroom on 4 GB-class machines:
+
+- `bun --smol` — smaller default heap, more aggressive GC
+- `--incremental --no-search --no-link-check --no-memory` — trim the heaviest phases
+- Wrap per-site builds in `systemd-run --user --scope -p MemoryMax=...` so a runaway build can't wedge the host
+- On Linux, enable **zram** — compressed RAM-backed swap absorbs allocation spikes without waiting on disk I/O
+
+See [GETTING-STARTED.md](GETTING-STARTED.md#building-large-sites-on-low-ram-hosts) for commands and example configs.
+
 ## Security
 
 See [SECURITY.md](SECURITY.md) for the threat model and design decisions.
