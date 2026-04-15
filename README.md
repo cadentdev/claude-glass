@@ -123,6 +123,39 @@ For extra headroom on 4 GB-class machines:
 
 See [GETTING-STARTED.md](GETTING-STARTED.md#building-large-sites-on-low-ram-hosts) for commands and example configs.
 
+## Running as a Cron Job
+
+A reference nightly build script lives at [`scripts/nightly-build.sh`](scripts/nightly-build.sh). It builds a list of sites with per-site `systemd-run --user --scope` memory isolation and sends an ntfy summary.
+
+Example crontab entry (runs 03:30 daily):
+
+```
+30 3 * * * /home/neil/Repos/cadentdev/claude-glass/scripts/nightly-build.sh
+```
+
+### Linux: enable user lingering
+
+If your cron script uses `systemd-run --user --scope` (as the reference script does), you **must** enable lingering for the user that owns the crontab:
+
+```bash
+sudo loginctl enable-linger $USER
+```
+
+Without lingering, `systemd --user` only runs while you have an active login session (SSH, console, or GUI). Cron fires without a session, so the user D-Bus socket doesn't exist and `systemd-run --user --scope` fails with:
+
+```
+Failed to connect to bus: No medium found
+```
+
+The failure is silent in the nightly log unless you read it directly — manual runs from an interactive shell will "work" because your session bus is available, masking the bug. Verify with:
+
+```bash
+loginctl show-user $USER | grep Linger
+# Linger=yes
+```
+
+Lingering is persistent across reboots and reversible with `sudo loginctl disable-linger $USER`.
+
 ## Security
 
 See [SECURITY.md](SECURITY.md) for the threat model and design decisions.
