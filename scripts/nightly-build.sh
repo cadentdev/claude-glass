@@ -53,7 +53,13 @@ build_site() {
 # PAI (~/.claude) — largest site, needs memory-safe flags
 build_site "/home/neil/.claude" "flicky" --no-search --no-memory
 
-# Repo .claude directories (--no-search: pagefind times out in cron; index when serving)
+# Repo .claude directories.
+# --no-search: pagefind index generation stalls on large sites (thousands of
+# files) regardless of whether the build is headless or interactive. Confirmed
+# 2026-04-15 on flicky — `bun src/cli.ts serve` (no flags) hung mid-build on
+# ~/.claude even from an interactive shell, same failure mode as cron.
+# Until that's fixed upstream, both nightly and interactive serves of large
+# sites must pass --no-search. Tracked in #26.
 build_site "/home/neil/Repos/stratofax/slipbox/.claude" "slipbox" --no-search
 build_site "/home/neil/Repos/stratofax/posts/.claude" "posts" --no-search
 build_site "/home/neil/Repos/cadentdev/claude-yolo-docker/.claude" "claude-yolo-docker" --no-search
