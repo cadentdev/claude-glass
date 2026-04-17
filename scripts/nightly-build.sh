@@ -59,10 +59,9 @@ build_site() {
 }
 
 # PAI (~/.claude) — largest site, needs memory-safe flags.
-# --no-search: flicky's ~1,600 pages still take ~42 min to index;
-# too long for nightly alongside other cron jobs on 3.7 GB host.
-# Run full search build manually: bun src/cli.ts build ~/.claude --name flicky --no-memory --no-link-check
-build_site "/home/neil/.claude" "flicky" --no-search --no-memory
+# Search enabled: per-site indexing + worktree exclusion brought flicky
+# from OOM-kill → 6.5 min full build (2,770 pages) within 2.5 GB cap.
+build_site "/home/neil/.claude" "flicky" --no-memory
 
 # Repo .claude directories — search enabled now that indexing is per-site.
 # Previous --no-search was needed when Pagefind indexed all sites (~9,400 pages)
