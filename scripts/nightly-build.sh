@@ -58,19 +58,18 @@ build_site() {
   fi
 }
 
-# PAI (~/.claude) — largest site, needs memory-safe flags
+# PAI (~/.claude) — largest site, needs memory-safe flags.
+# --no-search: flicky's ~1,600 pages still take ~42 min to index;
+# too long for nightly alongside other cron jobs on 3.7 GB host.
+# Run full search build manually: bun src/cli.ts build ~/.claude --name flicky --no-memory --no-link-check
 build_site "/home/neil/.claude" "flicky" --no-search --no-memory
 
-# Repo .claude directories.
-# --no-search: pagefind index generation stalls on large sites (thousands of
-# files) regardless of whether the build is headless or interactive. Confirmed
-# 2026-04-15 on flicky — `bun src/cli.ts serve` (no flags) hung mid-build on
-# ~/.claude even from an interactive shell, same failure mode as cron.
-# Until that's fixed upstream, both nightly and interactive serves of large
-# sites must pass --no-search. Tracked in #26.
-build_site "/home/neil/Repos/stratofax/slipbox/.claude" "slipbox" --no-search
-build_site "/home/neil/Repos/stratofax/posts/.claude" "posts" --no-search
-build_site "/home/neil/Repos/cadentdev/claude-yolo-docker/.claude" "claude-yolo-docker" --no-search
+# Repo .claude directories — search enabled now that indexing is per-site.
+# Previous --no-search was needed when Pagefind indexed all sites (~9,400 pages)
+# per build. With per-site scoping (d15c7ef), small sites index in <2s.
+build_site "/home/neil/Repos/stratofax/slipbox/.claude" "slipbox"
+build_site "/home/neil/Repos/stratofax/posts/.claude" "posts"
+build_site "/home/neil/Repos/cadentdev/claude-yolo-docker/.claude" "claude-yolo-docker"
 
 echo "$(ts) === done ===" >> "$LOG"
 
