@@ -1,5 +1,26 @@
 # Release Notes
 
+## v0.7.7 (unreleased)
+
+### Per-Site Search Indexing
+
+- **Search scoped per-site** — Pagefind now indexes each site's prefix directory instead of the entire output directory. Small sites (slipbox, posts) index in under 2 seconds; previously each took ~50 minutes because the global index re-indexed all sites every build.
+- **Worktree exclusion** — Agent worktrees (`worktrees/**`, `.claude/worktrees/**`) are now excluded by default. A single agent worktree was generating 6,622 pages (70% of the largest build), all ephemeral subagent data.
+- **Flicky search viable on 3.7 GB host** — With per-site scoping and worktree exclusion, flicky (1,601 pages) indexes in 6.5 minutes within a 2.5 GB cgroup. Previously OOM-killed every time.
+- **Landing page search removed** — Search is now per-site only (available within each site's sidebar). The root landing page no longer references a global search index.
+
+### Nightly Build Improvements
+
+- **Search enabled for all sites** — Nightly builds now include search indexing for all 4 sites. Previously all sites used `--no-search` due to the global index memory/time cost.
+- **systemd user bus initialization** — `nightly-build.sh` now initializes `XDG_RUNTIME_DIR` and `DBUS_SESSION_BUS_ADDRESS` for cron context, fixing 3 consecutive nights of silent failures where `systemd-run --user` couldn't find the user session bus.
+
+### Quality
+
+- Tests: 198 pass, 0 fail, 458 assertions (12 new tests for per-site search scoping)
+- New test file: `search-scope.test.ts` — pagefind path calculations, landing page search removal, worktree exclusions
+
+---
+
 ## v0.7.6 (2026-04-14)
 
 ### Stability

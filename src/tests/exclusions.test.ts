@@ -19,6 +19,11 @@ describe('DEFAULT_EXCLUSIONS', () => {
     expect(DEFAULT_EXCLUSIONS).toContain('.git/**');
     expect(DEFAULT_EXCLUSIONS).toContain('node_modules/**');
   });
+
+  test('includes worktree exclusions', () => {
+    expect(DEFAULT_EXCLUSIONS).toContain('worktrees/**');
+    expect(DEFAULT_EXCLUSIONS).toContain('.claude/worktrees/**');
+  });
 });
 
 describe('isExcluded with DEFAULT_EXCLUSIONS', () => {
@@ -103,5 +108,18 @@ describe('isExcluded pattern types', () => {
     expect(isExcluded('server.pem', DEFAULT_EXCLUSIONS)).toBe(true);
     expect(isExcluded('id_rsa', DEFAULT_EXCLUSIONS)).toBe(true);
     expect(isExcluded('id_ed25519', DEFAULT_EXCLUSIONS)).toBe(true);
+  });
+
+  test('worktrees directory is excluded', () => {
+    expect(isExcluded('worktrees/agent-abc123/file.md', DEFAULT_EXCLUSIONS)).toBe(true);
+  });
+
+  test('.claude/worktrees directory is excluded', () => {
+    expect(isExcluded('.claude/worktrees/agent-abc123/file.md', DEFAULT_EXCLUSIONS)).toBe(true);
+  });
+
+  test('worktrees directory itself is excluded', () => {
+    expect(isExcluded('worktrees', DEFAULT_EXCLUSIONS)).toBe(true);
+    expect(isExcluded('.claude/worktrees', DEFAULT_EXCLUSIONS)).toBe(true);
   });
 });
