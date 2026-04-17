@@ -1,23 +1,30 @@
 # Release Notes
 
-## v0.7.7 (unreleased)
+## v0.7.7 (2026-04-17)
 
 ### Per-Site Search Indexing
 
 - **Search scoped per-site** — Pagefind now indexes each site's prefix directory instead of the entire output directory. Small sites (slipbox, posts) index in under 2 seconds; previously each took ~50 minutes because the global index re-indexed all sites every build.
 - **Worktree exclusion** — Agent worktrees (`worktrees/**`, `.claude/worktrees/**`) are now excluded by default. A single agent worktree was generating 6,622 pages (70% of the largest build), all ephemeral subagent data.
 - **Flicky search viable on 3.7 GB host** — With per-site scoping and worktree exclusion, flicky (1,601 pages) indexes in 6.5 minutes within a 2.5 GB cgroup. Previously OOM-killed every time.
-- **Landing page search removed** — Search is now per-site only (available within each site's sidebar). The root landing page no longer references a global search index.
+- **Landing page search removed (user-visible behavior change)** — The root landing page no longer has a search box. Search is now per-site only, surfaced in each site's sidebar. Users on v0.7.6 who relied on a cross-site search from the landing page will need to search from within each site instead. The global `_pagefind/` index at the output root is no longer generated.
 
 ### Nightly Build Improvements
 
 - **Search enabled for all sites** — Nightly builds now include search indexing for all 4 sites. Previously all sites used `--no-search` due to the global index memory/time cost.
 - **systemd user bus initialization** — `nightly-build.sh` now initializes `XDG_RUNTIME_DIR` and `DBUS_SESSION_BUS_ADDRESS` for cron context, fixing 3 consecutive nights of silent failures where `systemd-run --user` couldn't find the user session bus.
+- **Portable user ID lookup** — `nightly-build.sh` now uses `$(id -u)` instead of hard-coded `$(id -u neil)`, so the script is portable across hosts and invoking users.
+
+### Security
+
+- **sanitize-html 2.17.2 → 2.17.3** — fixes [GHSA-9mrh-v2v3-xpfm](https://github.com/advisories/GHSA-9mrh-v2v3-xpfm) (moderate): allowedTags bypass via entity-decoded text in `nonTextTags` elements. claude-glass uses `sanitize-html` to sanitize rendered markdown / skill / agent / workflow content, so this CVE is directly relevant.
 
 ### Quality
 
 - Tests: 198 pass, 0 fail, 458 assertions (12 new tests for per-site search scoping)
+- Coverage: 96.66% line, 91.62% function
 - New test file: `search-scope.test.ts` — pagefind path calculations, landing page search removal, worktree exclusions
+- Security audit: 0 BLOCKERs (1 MEDIUM fixed in-scope; 3 LOW findings deferred to v0.7.8)
 
 ---
 
