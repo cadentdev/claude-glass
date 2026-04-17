@@ -220,9 +220,11 @@ export async function build(config: BuildConfig): Promise<void> {
   writeBuildCache(config.outputDir, prefix, entries);
 
   // Phase 6: Generate search index (unless --no-search) — before link check so pagefind assets exist
+  // Scope to prefixDir so Pagefind only indexes this site's pages, not all sites
+  // in the shared output directory. This dramatically reduces memory and time.
   if (!config.noSearch) {
     console.log('\nGenerating search index...');
-    runPagefindIndex(config.outputDir, config.verbose);
+    runPagefindIndex(prefixDir, config.verbose);
   }
 
   // Phase 7: Check for broken links (only within this site's prefix dir)

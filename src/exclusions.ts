@@ -16,6 +16,8 @@ export const DEFAULT_EXCLUSIONS = [
   'node_modules/**',
   'Releases/**',
   'tasks/**',
+  'worktrees/**',
+  '.claude/worktrees/**',
 
   // Sensitive
   '.env',

@@ -16,16 +16,19 @@ export function renderPage(opts: {
   /** Site prefix for URL paths (e.g. "flicky", "slipbox") */
   sitePrefix?: string;
 }): string {
-  // Pagefind assets are at the root output dir (/_pagefind/).
-  // We need to compute the relative path from this page to the root.
+  // Pagefind assets are scoped per-site at /<prefix>/_pagefind/.
+  // Compute the relative path from this page to its site's prefix directory.
   let pagefindPrefix: string;
   if (opts.fullOutputPath) {
+    // fullOutputPath = "prefix/path/to/index.html" — we need to reach "prefix/"
+    // so depth is (total segments - 1) minus 1 for the prefix itself
     const depth = opts.fullOutputPath.split('/').length - 1;
-    pagefindPrefix = depth > 0 ? '../'.repeat(depth) : '';
+    const prefixDepth = depth > 0 ? depth - 1 : 0;
+    pagefindPrefix = prefixDepth > 0 ? '../'.repeat(prefixDepth) : '';
   } else {
-    // Fallback: CSS depth + 1 for the prefix directory
+    // Fallback: CSS depth (already relative to prefix dir)
     const cssDepth = opts.cssPath.split('/').filter(p => p === '..').length;
-    pagefindPrefix = '../'.repeat(cssDepth + 1);
+    pagefindPrefix = '../'.repeat(cssDepth);
   }
   const pagefindCssPath = pagefindPrefix + '_pagefind/pagefind-ui.css';
   const pagefindJsPath = pagefindPrefix + '_pagefind/pagefind-ui.js';
