@@ -18,7 +18,7 @@ ts() { date "+%Y-%m-%d %H:%M:%S"; }
 # When cron jobs call systemd-run --user, they need access to the user session bus.
 # This is normally inherited from a login session, but cron doesn't have it.
 if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
-  export XDG_RUNTIME_DIR="/run/user/$(id -u neil)"
+  export XDG_RUNTIME_DIR="/run/user/$(id -u)"
   export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
 fi
 

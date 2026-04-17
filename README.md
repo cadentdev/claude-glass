@@ -17,7 +17,7 @@ Then open `http://localhost:3333` in your browser.
 
 ## Features
 
-- **Full-text search** — Pagefind-powered search from sidebar or landing page
+- **Per-site full-text search** — Pagefind-powered search scoped to each site, indexed within the site's prefix directory
 - **Mobile responsive** — Hamburger menu sidebar on mobile, responsive layout at all breakpoints
 - **Multi-site support** — Build multiple `.claude` directories into one site with incremental rebuilds
 - **Site index landing page** — Project cards with file counts, build dates, and resource links
@@ -113,6 +113,22 @@ The tool works on any `.claude` directory — from a vanilla Claude Code install
 ## Performance and Memory
 
 claude-glass streams page rendering — each file's HTML is freed immediately after it's written, so peak memory scales with the largest in-flight page rather than the total site size. Large builds (thousands of pages) are viable on low-RAM hosts like a Raspberry Pi or a small VPS.
+
+### Search indexing
+
+Search indexes are scoped per-site — each site gets its own Pagefind index in `<prefix>/_pagefind/`. This means:
+
+- Small sites (tens of pages) index in under 2 seconds
+- Large sites (thousands of pages) index within a 2.5 GB memory budget
+- Each site's search only returns results from that site
+
+Use `--no-search` to skip search indexing for faster builds when search isn't needed.
+
+### Excluded directories
+
+Agent worktrees (`.claude/worktrees/`, `worktrees/`) are excluded by default. These are ephemeral subagent data that can contain thousands of duplicate files and significantly inflate build time and memory usage. See `src/exclusions.ts` for the full exclusion list.
+
+### Memory tips
 
 For extra headroom on 4 GB-class machines:
 
