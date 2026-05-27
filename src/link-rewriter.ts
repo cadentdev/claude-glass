@@ -39,8 +39,9 @@ export function rewriteInternalLinks(
       }
 
       // Try to resolve the relative link against the current file's directory
-      const currentDir = dirname(currentRelativePath);
-      const resolved = normalize(join(currentDir, href));
+      // Normalize backslashes to forward slashes — dirname/join/normalize produce backslashes on Windows
+      const currentDir = dirname(currentRelativePath).replace(/\\/g, '/');
+      const resolved = normalize(join(currentDir, href)).replace(/\\/g, '/');
 
       // Strip any fragment
       const [pathPart, fragment] = resolved.split('#');

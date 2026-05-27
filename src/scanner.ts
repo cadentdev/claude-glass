@@ -19,7 +19,7 @@ export function scan(inputDir: string, extraExclusions: string[] = []): ScanEntr
 
     for (const item of items) {
       const absolutePath = join(dir, item);
-      const relativePath = relative(inputDir, absolutePath);
+      const relativePath = relative(inputDir, absolutePath).replace(/\\/g, '/');
 
       if (isExcluded(relativePath, exclusions)) continue;
 
