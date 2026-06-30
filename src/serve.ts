@@ -44,9 +44,11 @@ export async function serve(config: BuildConfig): Promise<void> {
         return new Response('Not Found', { status: 404 });
       }
 
-      // Path containment: resolve symlinks and verify file is within output dir
-      const realPath = realpathSync(filePath);
-      const realOutputDir = realpathSync(config.outputDir);
+      // Path containment: resolve symlinks and verify file is within output dir.
+      // Normalize backslashes first: realpathSync returns backslash paths on Windows, which break
+      // the forward-slash startsWith() containment check (every file would 403). No-op on POSIX.
+      const realPath = realpathSync(filePath).replace(/\\/g, '/');
+      const realOutputDir = realpathSync(config.outputDir).replace(/\\/g, '/');
       if (!realPath.startsWith(realOutputDir + '/') && realPath !== realOutputDir) {
         return new Response('Forbidden', { status: 403 });
       }
