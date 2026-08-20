@@ -11,14 +11,17 @@
 git clone https://github.com/cadentdev/claude-glass.git
 cd claude-glass
 bun install
+bun link          # installs the `cglass` CLI on your PATH
 ```
+
+> The tool is installed as `cglass`. The longer name `claude-glass` is also available as an alias. If you'd rather not `bun link`, substitute `bun src/cli.ts` for `cglass` in any example below.
 
 ## Generate Your First Site
 
 ### Option 1: Build and serve (recommended)
 
 ```bash
-bun src/cli.ts serve
+cglass serve
 ```
 
 This builds the site from `~/.claude` and starts a local server at `http://localhost:3333`.
@@ -26,7 +29,7 @@ This builds the site from `~/.claude` and starts a local server at `http://local
 ### Option 2: Build only
 
 ```bash
-bun src/cli.ts build
+cglass build
 ```
 
 The static site is written to `/tmp/claude-glass/`. Open `/tmp/claude-glass/index.html` in your browser, or serve it with any static file server.
@@ -34,7 +37,7 @@ The static site is written to `/tmp/claude-glass/`. Open `/tmp/claude-glass/inde
 ### Option 3: Point at a different directory
 
 ```bash
-bun src/cli.ts serve /path/to/.claude
+cglass serve /path/to/.claude
 ```
 
 ## Common Options
@@ -42,13 +45,13 @@ bun src/cli.ts serve /path/to/.claude
 ### Change the output directory
 
 ```bash
-bun src/cli.ts build --output ~/Sites/claude-glass
+cglass build --output ~/Sites/claude-glass
 ```
 
 ### Access from another device (LAN/Tailscale)
 
 ```bash
-bun src/cli.ts serve --host 0.0.0.0
+cglass serve --host 0.0.0.0
 ```
 
 Then browse to `http://<your-ip>:3333` from another device.
@@ -56,23 +59,23 @@ Then browse to `http://<your-ip>:3333` from another device.
 ### Exclude MEMORY files
 
 ```bash
-bun src/cli.ts serve --no-memory
+cglass serve --no-memory
 ```
 
 ### Exclude additional directories
 
 ```bash
-bun src/cli.ts serve --exclude "PAI/**" --exclude "lib/**"
+cglass serve --exclude "PAI/**" --exclude "lib/**"
 ```
 
 ### Add more sites
 
 ```bash
 # Add another project's .claude directory
-bun src/cli.ts build ~/Repos/myproject/.claude
+cglass build ~/Repos/myproject/.claude
 
 # Override the auto-derived name
-bun src/cli.ts build ~/Repos/myproject/.claude --name my-project
+cglass build ~/Repos/myproject/.claude --name my-project
 ```
 
 Each site gets its own section. The landing page shows cards for all registered sites.
