@@ -48,14 +48,22 @@
 - `--no-link-check` flag to skip broken link checking
 - Link checker scoped to current site prefix dir (was scanning all sites — 6.6M links)
 
+### Phase 0.7.8 — Windows, CI & Security (2026-08-20)
+- Windows support fixed — backslash path normalization in scanner, exclusions, link-rewriter, and the serve containment check (community contribution, #28/#31)
+- CI via GitHub Actions — `bun test` on Ubuntu + Windows for every PR, plus a separate `bun audit` job (#34)
+- Unit tests for the `build()` orchestrator — 14 tests including the v0.7.6 OOM-fix memory-streaming regression guard (#23/#37)
+- Six dependency advisories cleared — sanitize-html 2.17.7, postcss 8.5.26, nanoid 3.3.18; `bun audit` clean (#31/#35)
+- `cglass` primary executable name, `claude-glass` kept as alias (#24/#36)
+- CLAUDE.md codebase guidance (#33)
+
 ## Planned
 
-### Phase 0.7.5 — Testing & CI
+### Phase 0.7.5 — Testing & CI (remaining)
 - Shared `escapeHtml` utility (`src/utils/escape.ts`) — eliminate duplicate functions across layout.ts, build.ts, nav.ts
-- Unit tests for processors, scanner, nav builder
-- Integration tests for full build pipeline
-- CI via GitHub Actions
+- Unit tests for remaining processors, scanner edge cases, nav builder
 - Type checking in CI (`tsc --noEmit`)
+- `layout.ts` no-`fullOutputPath` fallback branch is unreachable and untested (carried from v0.7.7 and v0.7.8 reviews) — make the param required and delete the branch
+- Exclusion patterns: treat `.env.*` as a glob so `.env.local` etc. are excluded (carried from v0.7.7 and v0.7.8 security reviews)
 
 ### Phase 0.8 — Site Management & PAI Awareness
 - `remove` command — remove a site from manifest and delete its output directory

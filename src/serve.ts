@@ -45,11 +45,16 @@ export async function serve(config: BuildConfig): Promise<void> {
       }
 
       // Path containment: resolve symlinks and verify file is within output dir.
-      // Normalize backslashes first: realpathSync returns backslash paths on Windows, which break
-      // the forward-slash startsWith() containment check (every file would 403). No-op on POSIX.
-      const realPath = realpathSync(filePath).replace(/\\/g, '/');
-      const realOutputDir = realpathSync(config.outputDir).replace(/\\/g, '/');
-      if (!realPath.startsWith(realOutputDir + '/') && realPath !== realOutputDir) {
+      // On Windows, realpathSync returns backslash paths, which break the forward-slash
+      // startsWith() containment check (every file would 403) — normalize for comparison only.
+      // On POSIX the paths are compared untouched: filenames may legally contain literal
+      // backslashes, and rewriting them could let a crafted symlink target pass containment.
+      const realPath = realpathSync(filePath);
+      const realOutputDir = realpathSync(config.outputDir);
+      const isWindows = process.platform === 'win32';
+      const cmpPath = isWindows ? realPath.replace(/\\/g, '/') : realPath;
+      const cmpOutputDir = isWindows ? realOutputDir.replace(/\\/g, '/') : realOutputDir;
+      if (!cmpPath.startsWith(cmpOutputDir + '/') && cmpPath !== cmpOutputDir) {
         return new Response('Forbidden', { status: 403 });
       }
 

@@ -10,7 +10,7 @@ claude-glass is a static site generator that renders Claude Code `.claude` direc
 
 ```bash
 bun install                          # install dependencies
-bun test                             # run all tests
+bun test                             # run all tests (CI runs these on Ubuntu + Windows for every PR)
 bun test src/tests/nav.test.ts       # run one test file
 bun test -t "pattern"                # run tests matching a name
 bun src/cli.ts build [dir]           # build static site (default input: ~/.claude, output: ~/.local/share/claude-glass)

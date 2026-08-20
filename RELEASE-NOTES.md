@@ -1,5 +1,36 @@
 # Release Notes
 
+## v0.7.8 (2026-08-20)
+
+### Windows Support Fixed
+
+- **Backslash path separators no longer break Windows builds** (community contribution by [@voyagi](https://github.com/voyagi), PR #31, fixes #28) — on Windows, generated URLs used `\` separators, which left every internal link unrewritten (scanner, exclusions, link-rewriter) and made `serve` return 403 for every file because the symlink-containment check compared backslash paths against a forward-slash prefix. All path handling now normalizes to forward slashes; POSIX behavior is unchanged.
+
+### Security
+
+- **Six dependency advisories cleared** (PRs #31 and #35) — `bun audit` now reports 0 vulnerabilities:
+  - **sanitize-html 2.17.3 → 2.17.7** — fixes CVE-2026-44990 (critical: XSS via `xmp` raw-text passthrough, affected exactly 2.17.3) and GHSA-vccv-cmxp-4j9h (moderate: `javascript:` URIs through `action`/`formaction`/`poster` and similar attributes). sanitize-html sanitizes all rendered markdown/skill/agent/workflow content, so both were directly in scope.
+  - **postcss → 8.5.26** (via a `^8.5.23` override) — fixes CVE-2026-41305 (XSS via unescaped `</style>` in stringify output) and two source-map path-traversal advisories.
+  - **nanoid → 3.3.18** — fixes two infinite-loop advisories.
+
+### Continuous Integration (new)
+
+- **First CI for the repo** (PR #34) — GitHub Actions runs `bun test` on **Ubuntu and Windows** for every push to main and every pull request, with `fail-fast` off so a single-platform failure still reports the other. A separate `bun audit` job surfaces new dependency advisories as their own check without masking test results. The Windows job proved itself immediately: it failed on pre-fix main with exactly the #28 symptom, then passed on the fix.
+
+### CLI
+
+- **`cglass` is the new primary executable name** (PR #36, closes #24) — shorter to type and say; `claude-glass` remains available as an alias indefinitely. `bun link` installs both. README and GETTING-STARTED examples now prefer `cglass`.
+
+### Quality
+
+- **`build()` orchestrator now unit-tested** (PR #37, closes #23) — 14 new tests cover the happy path, the v0.7.6 OOM-fix memory-streaming invariant (regression-guarded via a test-only `afterRender` hook), downstream-phase isolation, error recovery (oversized and malformed files), incremental skip/rebuild/removal, and multi-site isolation.
+- Tests: 212 pass, 0 fail, 497 assertions. Overall line coverage 91.95% — numerically lower than v0.7.7's 96.66% only because `build.ts` (278 lines, previously 0% and absent from the report) is now included at 90.2%.
+- **CLAUDE.md added** (PR #33) — codebase guidance for Claude Code sessions.
+
+### Upgrade note
+
+- If you first built with **v0.7.5 or earlier**, your output directory may still contain an orphaned global `_pagefind/` directory at its root (superseded by per-site indexes in v0.7.7). It is unused and safe to delete: `rm -rf <output>/_pagefind`.
+
 ## v0.7.7 (2026-04-17)
 
 ### Per-Site Search Indexing
