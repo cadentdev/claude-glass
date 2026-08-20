@@ -92,8 +92,10 @@ export const DEFAULT_EXCLUSIONS = [
  * Supports ** glob patterns and simple filename matches.
  */
 export function isExcluded(relativePath: string, exclusions: string[]): boolean {
+  // Normalize backslashes to forward slashes for consistent pattern matching on Windows
+  const normalized = relativePath.replace(/\\/g, '/');
   for (const pattern of exclusions) {
-    if (matchPattern(relativePath, pattern)) return true;
+    if (matchPattern(normalized, pattern)) return true;
   }
   return false;
 }
