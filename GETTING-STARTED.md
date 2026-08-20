@@ -32,7 +32,7 @@ This builds the site from `~/.claude` and starts a local server at `http://local
 cglass build
 ```
 
-The static site is written to `/tmp/claude-glass/`. Open `/tmp/claude-glass/index.html` in your browser, or serve it with any static file server.
+The static site is written to `~/.local/share/claude-glass/` by default (override with `--output`). Open `index.html` there in your browser, or serve it with any static file server.
 
 ### Option 3: Point at a different directory
 

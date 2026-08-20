@@ -1,5 +1,7 @@
 # claude-glass
 
+[![CI](https://github.com/cadentdev/claude-glass/actions/workflows/ci.yml/badge.svg)](https://github.com/cadentdev/claude-glass/actions/workflows/ci.yml)
+
 Static site generator for browsing Claude Code `.claude` directories.
 
 Turn your `~/.claude` directory into a browseable local website. Discover skills, hooks, agents, and configuration you didn't know you had. Build multiple Claude Code installations into a single site with a shared landing page.
@@ -39,6 +41,8 @@ Then open `http://localhost:3333` in your browser.
 ## Requirements
 
 - [Bun](https://bun.sh) v1.0+
+
+Runs on macOS, Linux, and Windows — the test suite runs on Ubuntu and Windows in CI.
 
 ## Usage
 

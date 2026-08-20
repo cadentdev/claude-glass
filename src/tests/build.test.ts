@@ -112,7 +112,9 @@ describe('build() happy path', async () => {
 
   test('site landing page uses CLAUDE.md content', () => {
     const html = readFileSync(join(prefixDir, 'index.html'), 'utf-8');
-    expect(html).toContain('Test Site');
+    // Assert on body content unique to CLAUDE.md (its rewritten guide link),
+    // not the site name, which appears in every page title.
+    expect(html).toContain('href="/test-site/docs/guide/index.html"');
   });
 
   test('root landing page and manifest register the site', () => {
