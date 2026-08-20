@@ -23,7 +23,13 @@ import { mkdirSync, writeFileSync, copyFileSync, existsSync, unlinkSync } from '
 import { join, dirname } from 'path';
 import type { BuildConfig, ProcessedFile, ScanEntry } from './types';
 
-export async function build(config: BuildConfig): Promise<void> {
+export interface BuildHooks {
+  /** Test-only: called after the render loop, immediately before `processed` is released.
+   *  Lets tests assert the memory-streaming invariant (every file's html already freed). */
+  afterRender?: (processed: ProcessedFile[]) => void;
+}
+
+export async function build(config: BuildConfig, hooks?: BuildHooks): Promise<void> {
   const startTime = Date.now();
 
   // Resolve project name and prefix
@@ -189,6 +195,8 @@ export async function build(config: BuildConfig): Promise<void> {
     });
     writeFileSync(join(prefixDir, 'index.html'), indexHtml);
   }
+
+  hooks?.afterRender?.(processed);
 
   // Render phase done — drop the stub array so GC can reclaim everything
   // including entry/metadata references before search/link-check/pagefind run.
