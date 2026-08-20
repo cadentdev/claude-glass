@@ -2,7 +2,7 @@
 
 **Started:** 2026-08-20 | **Project:** claude-glass | **Base:** main | **Branch:** release/v0.7.8 | **PR:** TBD
 
-## Current Step: in progress
+## Current Step: COMPLETE (all 15 steps + 3 gates + retrospective)
 
 | Step | Status | Notes |
 |------|--------|-------|
@@ -17,14 +17,40 @@
 | 6. Documentation Final Pass | [x] | README: CI badge + Windows/platforms note; CLAUDE.md: CI note on `bun test`; ROADMAP: Phase 0.7.8 added to Completed, Phase 0.7.5 slimmed to remaining items; GETTING-STARTED/SECURITY checked, no stale content |
 | 7. Version Bump | [x] | package.json 0.7.7 → 0.7.8; `bun install` clean; 212 tests pass post-bump |
 | 8. Release Notes | [x] | RELEASE-NOTES.md v0.7.8 dated 2026-08-20 — Windows fix (community credit), Security (6 advisories), CI, cglass (#24 acceptance item satisfied), Quality/coverage note |
-| 9. PR Creation/Update | [ ] | |
+| 9. PR Creation/Update | [x] | PR #38 with full scope + gate results (gh pr edit works again — #22 fixed upstream, no REST workaround needed) |
 | 10. Issue Triage | [x] | #22/#23/#24/#28 closed pre-release (this release ships their fixes). Remaining open: #17, #20, #25 (blocked on #20), #26 (likely fixed by v0.7.7, awaiting flicky confirmation) — none blocked by or blocking v0.7.8 |
-| 11. Merge & Verify | [ ] | User admin-merges (author cannot self-approve; enforce_admins=false) |
-| --- GATE: CI | [ ] | Real GitHub Actions now — Ubuntu + Windows tests + bun audit must be green on the release PR |
-| 12. Tag & GitHub Release | [ ] | PAUSE for user sign-off before tagging (locked decision) |
-| 13. Post-Release | [ ] | LinkedIn draft in ~/Repos/stratofax/posts (repo present on this host) |
-| 14. Branch Cleanup | [ ] | |
-| 15. Retrospective | [ ] | |
+| 11. Merge & Verify | [x] | User admin-merged PR #38 → merge commit c638b15; 212 tests pass on merged main |
+| --- GATE: CI | [x] | PASS — release PR green (ubuntu/windows/audit) AND push-to-main run green: first fully green main build in repo history |
+| 12. Tag & GitHub Release | [x] | User sign-off received at pause point. v0.7.8 tag @ c638b15; release https://github.com/cadentdev/claude-glass/releases/tag/v0.7.8 |
+| 13. Post-Release | [x] | LinkedIn draft at ~/Repos/stratofax/posts/03-drafts/linkedin/claude-glass-v078.md |
+| 14. Branch Cleanup | [x] | Local + remote clean — only main remains (all feature branches deleted at merge time throughout the cycle) |
+| 15. Retrospective | [x] | See § Retrospective below |
+
+## Retrospective
+
+### What went well
+
+1. **Community PR handled with full supply-chain rigor.** Every lockfile hash in #31 was verified against the npm registry before trusting the diff; the suspicious-looking new `launder` dependency turned out to be genuinely added by sanitize-html upstream. The verification cost ~10 minutes and made merging a stranger's security-touching PR a confident act instead of a hopeful one.
+2. **CI-first sequencing paid off immediately.** Landing the Ubuntu+Windows matrix (#34) *before* merging the Windows fixes (#31) meant the community claim was machine-verified: red on pre-fix main with the exact reported symptom, green on the fix. The same matrix then guarded every subsequent PR in the cycle.
+3. **The review agents earned their tokens.** RedTeam caught a real defect introduced *by this release* (serve.ts applying the backslash rewrite on POSIX, and reading via the mutated string) that both the contributor and the maintainer-side review missed. Engineer caught a broken quickstart (`/tmp/claude-glass` vs the actual `~/.local/share/claude-glass` default) in the exact section this release rewrote. Both fixed pre-tag.
+4. **Stale-PR detection via re-audit.** Running `bun audit` on the community PR branch at review time (not trusting the PR's "0 vulnerabilities" claim from filing time) surfaced 5 advisories published in the intervening months — turning "merge and hope" into "merge + immediate follow-up (#35)".
+5. **Deferred findings finally have a home.** v0.7.7's deferrals were carried silently; this cycle logged the still-open ones (.env.* glob, layout.ts dead branch) in ROADMAP where they can't be forgotten.
+
+### What surprised us
+
+1. **The auto-mode permission classifier blocks outward actions from the user's identity** — admin merges, PR approvals, issue closes — but allows comments, pushes, and PR creation. The `!`-prefix handoff worked smoothly, but each block was discovered by hitting it. Worth remembering which actions need the user.
+2. **#22 (gh pr edit GraphQL failure) fixed itself upstream** — gh 2.97.0 no longer traverses projectCards. A deferred in-repo helper script would have been wasted work; patience beat process.
+3. **Coverage percentage went DOWN in a release that added the most-wanted tests** — build.ts entering the report at 90.2% (from invisible-0%) dropped the average from 96.66% to 91.95%. Gate thresholds on aggregate coverage need a denominator-growth caveat.
+
+### Workflow improvements (recommended)
+
+- Add to the checklist template: "re-run `bun audit` on any dependency PR at merge time, not just filing time."
+- Document the classifier-blocked action list (merge --admin, pr review --approve, issue close) in the release template so the user-handoff points are planned, not discovered.
+- Coverage gate: compare per-file coverage against the previous release rather than the aggregate percentage.
+
+### Time
+
+Pre-flight → tag published: ~35 minutes of session time (two parallel review agents ~3 min each), spread across user sign-off pauses.
 
 ## Features Included (merged to main since v0.7.7, all via PR with green CI where CI existed)
 
