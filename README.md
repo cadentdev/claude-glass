@@ -10,10 +10,13 @@ Turn your `~/.claude` directory into a browseable local website. Discover skills
 git clone https://github.com/cadentdev/claude-glass.git
 cd claude-glass
 bun install
-bun src/cli.ts serve ~/.claude
+bun link          # installs the `cglass` CLI on your PATH
+cglass serve ~/.claude
 ```
 
 Then open `http://localhost:3333` in your browser.
+
+> The tool is installed as `cglass`. The longer name `claude-glass` is also available as an alias. Running from a repo checkout without `bun link`? Substitute `bun src/cli.ts` for `cglass` in any example.
 
 ## Features
 
@@ -40,8 +43,8 @@ Then open `http://localhost:3333` in your browser.
 ## Usage
 
 ```
-claude-glass build [dir]     Build static site
-claude-glass serve [dir]     Build + serve
+cglass build [dir]     Build static site
+cglass serve [dir]     Build + serve
 
 Options:
   --output, -o <path>    Output directory (default: ~/.local/share/claude-glass)
@@ -62,13 +65,13 @@ Each build adds or updates one site in the output directory. Previously built si
 
 ```bash
 # Build your main .claude directory
-bun src/cli.ts build ~/.claude
+cglass build ~/.claude
 
 # Add another project's .claude directory
-bun src/cli.ts build ~/Repos/myproject/.claude
+cglass build ~/Repos/myproject/.claude
 
 # Rebuild just the first site — myproject is untouched
-bun src/cli.ts build ~/.claude
+cglass build ~/.claude
 ```
 
 A build manifest (`.claude-glass.json`) in the output directory tracks all registered sites. The landing page at the root shows project cards for every site.
@@ -78,13 +81,13 @@ A build manifest (`.claude-glass.json`) in the output directory tracks all regis
 Use `--incremental` to skip rebuilds when no source files have changed — ideal for cron jobs:
 
 ```bash
-bun src/cli.ts build ~/.claude --incremental --no-search --no-link-check
+cglass build ~/.claude --incremental --no-search --no-link-check
 ```
 
 Project names are auto-derived from the source path. Use `--name` to override:
 
 ```bash
-bun src/cli.ts build ~/.claude --name my-config
+cglass build ~/.claude --name my-config
 ```
 
 ### Accessing from another device
@@ -92,7 +95,7 @@ bun src/cli.ts build ~/.claude --name my-config
 By default, claude-glass only listens on localhost. To access from your LAN or Tailscale network:
 
 ```bash
-bun src/cli.ts serve ~/.claude --host 0.0.0.0
+cglass serve ~/.claude --host 0.0.0.0
 ```
 
 ## How It Works
