@@ -1,6 +1,6 @@
 ---
 name: release
-description: Run the claude-glass release process — 15 steps, 3 gates, agent-run reviews, pause before tag. Creates and maintains .dev/release-vX.Y.Z.md as the working checklist. Use when the user asks to cut, prepare, or resume a release.
+description: Run the claude-glass release process — kickoff (scope from an issue), 15 steps, 3 gates, agent-run reviews, pause before tag. Creates and maintains .dev/release-vX.Y.Z.md as the working checklist. Optionally takes an issue number/URL as the driving issue (e.g. /release 24). Use when the user asks to cut, prepare, or resume a release.
 ---
 
 # claude-glass Release Process
@@ -10,9 +10,32 @@ single source of truth for the release's state; this skill is the template it
 is created from. Update the instance file as each step completes — a resumed
 session must be able to pick up from it alone.
 
+## Kickoff — establish the driving issue and scope
+
+The skill accepts an issue number or URL as its argument (`/release 24`).
+Resolve the release's **driving issue** before anything else:
+
+1. **Issue provided as argument** → `gh issue view <n>`, confirm it with the
+   user as the release's scope anchor.
+2. **No argument** → ask the user for a specific issue, offering as the
+   alternative: survey the open issues (`gh issue list --state open`,
+   summarized with any blocking relationships) and let the user pick.
+3. **No open issues** (or none suitable) → check ROADMAP.md for the next
+   feature enhancement and propose it as the driving scope.
+
+Record the outcome in the instance file under "User decisions locked":
+the driving issue/scope, plus anything surveyed and explicitly ruled OUT
+of this release.
+
+Scope boundary: kickoff decides *why* this release exists; the checklist
+still releases only what is merged on `main`. If the driving issue is not
+yet implemented, pause here — the feature work happens first (normal
+branch + PR flow), and the release resumes at Setup once it lands.
+
 ## Setup
 
-1. Confirm the target version with the user (semver, `vX.Y.Z`).
+1. Confirm the target version with the user (semver, `vX.Y.Z`) — sized to
+   the driving issue (fix/feature → patch/minor).
 2. Create branch `release/vX.Y.Z` from up-to-date `main`.
 3. Create `.dev/release-vX.Y.Z.md` from the **Checklist instance template**
    at the bottom of this file. Prior instances (`.dev/release-v*.md`) are
@@ -77,8 +100,10 @@ addressed or deferred with notes.
    credit where due and upgrade notes for behavior changes.
 9. **PR Creation/Update** — `gh pr create`/`edit` with scope + gate
    results. Backfill the instance file's header (`PR:` field) now.
-10. **Issue Triage** — close issues shipped by this release (user handoff:
-    `gh issue close` is blocked); confirm nothing open blocks the release.
+10. **Issue Triage** — close issues shipped by this release, starting with
+    the driving issue from Kickoff (user handoff: `gh issue close` is
+    blocked); confirm nothing open blocks the release and nothing ruled
+    out at Kickoff crept in.
 11. **Merge & Verify** — user admin-merges the PR (handoff); re-run tests
     on merged main.
 
